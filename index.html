@@ -3,254 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>峴港五日遊 | Da Nang Travel App</title>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>峴港旅遊助手</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F0F4F7; }
-        
-        /* 頁首 Banner CSS */
-        .banner-container {
-            width: 100%;
-            height: 250px; /* 您要求的容器高度 */
-            overflow: hidden;
-            position: relative;
-        }
-        .banner-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 確保圖片不變形地填滿 */
-            object-position: center;
-        }
-        
-        /* 配色與樣式 (藍、黃、綠風格) */
-        .tab-active { color: #0056b3; background-color: #FFFDE7; border-radius: 12px; }
-        
-        /* 隱藏捲軸 */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* 動畫 */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
+        .header-gradient { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
+        .glass-nav { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); }
+        .tab-active { color: #fbbf24; border-bottom: 2px solid #fbbf24; }
+        [v-cloak] { display: none; }
+        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
     </style>
 </head>
 <body class="pb-28">
 
-<div id="app">
-    <div class="banner-container shadow-lg">
-        <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAgCgAwAEAAAAAQAAAOAAAAAA/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcmVzZXJ2ZWQu/+0AOFVuaWNvZGUAQ29weXJpZ2h0IDIwMjAgZ2V0dHlpbWFnZXMuIEFsbCByaWdodHMgcm好了，沒問題！我已經將您上傳的這張峴港龍橋與韓江夜景的照片，替換掉原本程式碼中的頁首 Banner。
-
-另外，針對您提到的 **404 錯誤**，請務必確認您在 GitHub 上傳的檔案名稱是 **`index.html`**（必須全小寫）。
-
-以下是修正後的完整程式碼，您可以直接複製並儲存為 `index.html`，然後上傳覆蓋掉 GitHub 上的舊檔案：
-
-```html
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>峴港五日遊 | Da Nang Travel App</title>
-    <script src="[https://unpkg.com/vue@3/dist/vue.global.js](https://unpkg.com/vue@3/dist/vue.global.js)"></script>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap](https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap)" rel="stylesheet">
-    <style>
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F0F4F7; }
-        
-        /* 頁首 Banner CSS (修正圖片尺寸與比例) */
-        .banner-container {
-            width: 100%;
-            height: 250px; /* 固定容器高度為 250px */
-            overflow: hidden;
-            position: relative;
-        }
-        .banner-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* 確保圖片不變形地填滿容器 */
-            object-position: center; /* 圖片置中顯示 */
-        }
-        
-        /* 泰式簡約藍綠風格配色 */
-        .primary-blue { color: #0056b3; }
-        .tab-active { color: #0056b3; background-color: #FFFDE7; border-radius: 12px; }
-        
-        /* 隱藏捲軸 */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* 入場動畫 */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
-    </style>
-</head>
-<body class="pb-28">
-
-<div id="app">
-    <div class="banner-container shadow-lg">
-        <img src="[https://images.unsplash.com/photo-1571401824706-e7e7a5c8981f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=400&q=80](https://images.unsplash.com/photo-1571401824706-e7e7a5c8981f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&h=400&q=80)" 
-             alt="Da Nang Dragon Bridge Night View" class="banner-image">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-        <div class="absolute bottom-6 left-6 text-white animate-fade-in">
-            <h1 class="text-2xl font-bold tracking-wider">峴港五日遊</h1>
-            <p class="text-sm opacity-90 font-light uppercase tracking-widest">2026.05.31 - 06.04</p>
+<div id="app" v-cloak>
+    <header class="header-gradient pt-12 pb-16 px-6 text-white rounded-b-[3rem] shadow-lg">
+        <div class="flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tight">峴港五日遊</h1>
+                <p class="text-xs opacity-70 mt-1 uppercase tracking-widest">2026.05.31 - 06.04</p>
+            </div>
+            <div class="bg-white/20 backdrop-blur-md rounded-2xl p-2 text-center border border-white/10">
+                <p class="text-[10px] font-bold">峴港</p>
+                <p class="text-sm">29°C</p>
+            </div>
         </div>
-    </div>
+    </header>
 
-    <main class="px-4 mt-[-15px] relative z-10">
+    <main class="px-5 mt-[-30px] relative z-10">
         
-        <div class="flex bg-white/90 backdrop-blur rounded-2xl p-1.5 shadow-md mb-6 sticky top-4 z-20">
-            <button v-for="tab in tabs" :key="tab.id" 
-                    @click="currentTab = tab.id"
-                    :class="['flex-1 py-3 text-sm font-bold transition-all', currentTab === tab.id ? 'tab-active' : 'text-gray-400']">
-                {{ tab.name }}
-            </button>
-        </div>
-
-        <div v-if="currentTab === 'itinerary'" class="space-y-4 animate-fade-in">
-            <div v-for="(item, index) in itinerary" :key="index" class="bg-white rounded-3xl p-5 shadow-sm border-b-4 border-green-400 hover:shadow-md transition-shadow">
-                <div class="flex justify-between items-start gap-3">
+        <div v-if="currentTab === 'itinerary'" class="space-y-4">
+            <div v-for="(item, i) in itinerary" :key="i" class="bg-white rounded-3xl p-5 card-shadow border border-gray-50">
+                <div class="flex justify-between items-start">
                     <div class="flex-1">
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-black text-white bg-blue-500 px-2.5 py-1 rounded-full uppercase">{{ item.day }}</span>
-                            <span class="text-xs text-gray-400 font-medium">{{ item.date }}</span>
+                            <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ item.day }}</span>
+                            <span class="text-[10px] text-gray-400 font-medium">{{ item.date }}</span>
                         </div>
-                        <h3 class="font-bold text-lg text-gray-800 mt-2.5">{{ item.title }}</h3>
-                        <p class="text-xs text-gray-500 mt-1.5 flex items-center gap-1.5">
-                            <svg class="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            {{ item.location }}
-                        </p>
+                        <h3 class="font-bold text-gray-800 mt-2">{{ item.title }}</h3>
+                        <p class="text-xs text-gray-400 mt-1">📍 {{ item.location }}</p>
                     </div>
-                    <a :href="'http://googleusercontent.com/maps.google.com/2' + encodeURIComponent(item.location)" 
-                       target="_blank"
-                       class="bg-green-500 text-white p-3.5 rounded-2xl shadow-lg shadow-green-100 active:scale-95 transition-transform flex-shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.location)" target="_blank"
+                       class="bg-green-500 text-white p-3 rounded-2xl shadow-md active:scale-90 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                     </a>
                 </div>
-                <textarea v-model="item.journal" placeholder="✍️ 點擊這裡紀錄這趟旅程的心情或備忘..." 
-                          class="w-full mt-4 p-4 bg-blue-50/50 border-none rounded-2xl text-sm text-gray-600 focus:ring-2 focus:ring-blue-100 h-28 resize-none"></textarea>
             </div>
         </div>
 
-        <div v-if="currentTab === 'budget'" class="space-y-4 animate-fade-in">
-            <div class="bg-gradient-to-br from-blue-600 to-blue-400 rounded-[2rem] p-8 text-white shadow-xl shadow-blue-100">
-                <p class="text-center text-blue-100 text-sm mb-2 font-medium tracking-wide">Total Expenses</p>
-                <h2 class="text-center text-4xl font-bold mb-6 tracking-tight">NT$ {{ totalBudget }}</h2>
-                <div class="grid grid-cols-2 gap-3.5">
-                    <input v-model="newExpense.name" type="text" placeholder="項目 (如：午餐)" class="p-4 bg-white/20 rounded-xl border-none placeholder-white/60 text-white focus:ring-white focus:ring-2">
-                    <input v-model.number="newExpense.amount" type="number" placeholder="金額 (TWD)" class="p-4 bg-white/20 rounded-xl border-none placeholder-white/60 text-white focus:ring-white focus:ring-2">
+        <div v-if="currentTab === 'exchange'" class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
+            <h3 class="font-bold text-xl mb-6 flex items-center gap-2 text-gray-800">
+                <span class="p-2 bg-yellow-100 rounded-xl text-yellow-600 text-sm">💰</span> 匯率換算
+            </h3>
+            <div class="space-y-5">
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 mb-1 block">台幣 TWD</label>
+                    <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-2xl font-bold text-blue-600 focus:ring-2 focus:ring-blue-100">
                 </div>
-                <button @click="addExpense" class="w-full mt-4 bg-yellow-400 text-blue-900 py-4 rounded-2xl font-black shadow-lg shadow-yellow-200 active:scale-98 transition">新增一筆支出</button>
-            </div>
-            <div class="bg-white rounded-3xl p-5 shadow-sm">
-                <h4 class="text-sm font-bold text-gray-400 mb-2 px-2">消費明細</h4>
-                <div v-for="(exp, i) in expenses" :key="i" class="flex justify-between items-center py-4 border-b border-gray-50 last:border-0animate-fade-in">
-                    <div class="flex items-center gap-3.5">
-                        <div class="w-2.5 h-2.5 bg-green-400 rounded-full flex-shrink-0"></div>
-                        <span class="text-gray-700 font-medium">{{ exp.name }}</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="font-bold text-gray-900 text-lg">$ {{ exp.amount }}</span>
-                        <button @click="expenses.splice(i, 1)" class="text-red-300 hover:text-red-500 transition text-xs">刪除</button>
-                    </div>
+                <div class="flex justify-center text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
                 </div>
-                <p v-if="expenses.length === 0" class="text-center text-gray-400 py-8 text-sm">目前還沒有記帳紀錄喔！</p>
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 mb-1 block">越南盾 VND (萬)</label>
+                    <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none text-2xl font-bold text-green-600 focus:ring-2 focus:ring-green-100">
+                </div>
+                <div class="mt-4 p-4 bg-gray-50 rounded-2xl">
+                    <p class="text-[11px] text-gray-400 text-center leading-relaxed">
+                        目前匯率預設：1 TWD ≈ 770 VND<br>
+                        (輸入 100 台幣，下方會顯示 7.7 萬越南盾)
+                    </p>
+                </div>
             </div>
         </div>
 
-        <div v-if="currentTab === 'wishlist'" class="space-y-3.5 animate-fade-in">
-            <div class="bg-white rounded-3xl p-3 shadow-sm flex gap-2 border border-gray-100">
-                <input v-model="newWish" type="text" placeholder="想買的伴手禮 (如：腰果)..." class="flex-1 p-4 bg-gray-50 rounded-2xl border-none focus:ring-gray-100 focus:ring-2">
-                <button @click="addWish" class="bg-blue-600 text-white px-7 rounded-2xl font-bold active:scale-95 transition">新增</button>
+        <div v-if="currentTab === 'weather'" class="space-y-4">
+            <div class="bg-white rounded-[2.5rem] p-8 card-shadow text-center">
+                <div class="flex flex-col items-center">
+                    <span class="text-gray-400 text-sm">峴港市, 越南</span>
+                    <img src="https://openweathermap.org/img/wn/02d@2x.png" class="w-24 h-24">
+                    <h2 class="text-5xl font-bold text-gray-800">29°C</h2>
+                    <p class="text-blue-500 font-medium mt-2">多雲轉晴 🌤️</p>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-gray-100">
+                    <div>
+                        <p class="text-xs text-gray-400">降雨機率</p>
+                        <p class="font-bold text-gray-700">20%</p>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400">濕度</p>
+                        <p class="font-bold text-gray-700">75%</p>
+                    </div>
+                </div>
             </div>
-            <div v-for="(wish, i) in wishes" :key="i" 
-                 class="bg-white p-5 rounded-2xl flex items-center gap-4 shadow-sm group hover:shadow-md transition">
-                <input type="checkbox" class="w-6 h-6 rounded-lg border-blue-200 text-blue-600 focus:ring-0">
-                <span class="text-gray-700 flex-1 font-medium group-hover:text-gray-900">{{ wish }}</span>
-                <button @click="wishes.splice(i, 1)" class="text-gray-200 group-hover:text-red-300 transition">✕</button>
+            <div class="bg-blue-50 rounded-2xl p-4 text-blue-700 text-xs leading-relaxed">
+                💡 六月的峴港非常炎熱，建議穿著透氣衣物，並隨時補充水分！
             </div>
         </div>
 
     </main>
 
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-gray-900/90 backdrop-blur-xl rounded-full flex justify-around py-4 shadow-2xl z-50 border border-gray-700/50">
-        <button @click="currentTab = 'itinerary'" :class="currentTab === 'itinerary' ? 'text-yellow-400' : 'text-gray-500'">
-            <div class="flex flex-col items-center px-4 active:scale-90 transition-transform">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-                <span class="text-[10px] mt-1.5 font-bold tracking-wider">行程導航</span>
-            </div>
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-sm:w-[95%] max-w-sm glass-nav rounded-full px-4 py-3 flex justify-around shadow-2xl z-50 border border-white/10">
+        <button @click="currentTab = 'itinerary'" :class="{ 'tab-active': currentTab === 'itinerary' }" class="flex flex-col items-center text-gray-500 p-2 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+            <span class="text-[10px] mt-1 font-bold">行程</span>
         </button>
-        <button @click="currentTab = 'budget'" :class="currentTab === 'budget' ? 'text-yellow-400' : 'text-gray-500'">
-            <div class="flex flex-col items-center px-4 active:scale-90 transition-transform">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                <span class="text-[10px] mt-1.5 font-bold tracking-wider">旅費記帳</span>
-            </div>
+        <button @click="currentTab = 'exchange'" :class="{ 'tab-active': currentTab === 'exchange' }" class="flex flex-col items-center text-gray-500 p-2 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="text-[10px] mt-1 font-bold">換匯</span>
         </button>
-        <button @click="currentTab = 'wishlist'" :class="currentTab === 'wishlist' ? 'text-yellow-400' : 'text-gray-500'">
-            <div class="flex flex-col items-center px-4 active:scale-90 transition-transform">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                <span class="text-[10px] mt-1.5 font-bold tracking-wider">願望清單</span>
-            </div>
+        <button @click="currentTab = 'weather'" :class="{ 'tab-active': currentTab === 'weather' }" class="flex flex-col items-center text-gray-500 p-2 transition-all">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+            <span class="text-[10px] mt-1 font-bold">天氣</span>
         </button>
     </nav>
 </div>
 
 <script>
-    const { createApp, ref, computed, watchEffect } = Vue;
-
+    const { createApp, ref, reactive } = Vue;
     createApp({
         setup() {
-            // Tab 管理
             const currentTab = ref('itinerary');
-            const tabs = [
-                { id: 'itinerary', name: '行程導航' },
-                { id: 'budget', name: '旅費記帳' },
-                { id: 'wishlist', name: '願望清單' }
+            const itinerary = [
+                { day: "Day 1", date: "5/31", title: "高雄 ➔ 峴港 ➔ 會安古鎮漫遊", location: "Hoi An Ancient Town" },
+                { day: "Day 2", date: "6/01", title: "迦南島竹桶船 ➔ 樂釣螃蟹", location: "Cam Thanh Coconut Village" },
+                { day: "Day 3", date: "6/02", title: "南會安野生動物園 ➔ 韓江遊船", location: "Vinpearl River Safari South Hoi An" },
+                { day: "Day 4", date: "6/03", title: "巴拿山法國山城 ➔ 佛手橋", location: "Golden Bridge Ba Na Hills" },
+                { day: "Day 5", date: "6/04", title: "五行山 ➔ 粉紅教堂 ➔ 賦歸", location: "Da Nang Cathedral" }
             ];
-
-            // 從 LocalStorage 載入資料的輔助函式
-            const getSavedData = (key, defaultVal) => JSON.parse(localStorage.getItem(key)) || defaultVal;
-
-            // --- 行程資料 ---
-            const itinerary = ref(getSavedData('danang_itin_v3', [
-                { day: "Day 1", date: "5/31", title: "會安古鎮漫遊", location: "Hoi An Ancient Town", journal: "" },
-                { day: "Day 2", date: "6/01", title: "迦南島竹桶船生态遊", location: "Cam Thanh Coconut Village", journal: "" },
-                { day: "Day 3", date: "6/02", title: "南會安野生動物園", location: "Vinpearl River Safari South Hoi An", journal: "" },
-                { day: "Day 4", date: "6/03", title: "巴拿山黃金佛手橋", location: "Golden Bridge Ba Na Hills", journal: "" },
-                { day: "Day 5", date: "6/04", title: "峴港粉紅教堂 & 五行山", location: "Da Nang Cathedral", journal: "" }
-            ]));
-
-            // --- 記帳資料 ---
-            const expenses = ref(getSavedData('danang_exp_v3', []));
-            const newExpense = ref({ name: '', amount: null });
-            const totalBudget = computed(() => expenses.value.reduce((sum, exp) => sum + Number(exp.amount), 0));
-            const addExpense = () => {
-                if(newExpense.value.name && newExpense.value.amount) {
-                    expenses.value.unshift({...newExpense.value}); // 新增的排在前面
-                    newExpense.value = { name: '', amount: null };
-                }
+            
+            const rates = reactive({ twd: 100, vnd: 7.7 });
+            const convert = (type) => {
+                if (type === 'twd') rates.vnd = Number((rates.twd * 0.077).toFixed(2));
+                else rates.twd = Number((rates.vnd / 0.077).toFixed(0));
             };
 
-            // --- 願望清單資料 ---
-            const wishes = ref(getSavedData('danang_wish_v3', ["腰果", "G7 咖啡", "芒果乾", "越南編織包"]));
-            const newWish = ref('');
-            const addWish = () => {
-                if(newWish.value) {
-                    wishes.value.push(newWish.value);
-                    newWish.value = '';
-                }
-            };
-
-            // --- 自動存檔 (監聽資料變化並寫入 LocalStorage) ---
-            watchEffect(() => {
-                localStorage.setItem('danang_itin_v3', JSON.stringify(itinerary.value));
-                localStorage.setItem('danang_exp_v3', JSON.stringify(expenses.value));
-                localStorage.setItem('danang_wish_v3', JSON.stringify(wishes.value));
-            });
-
-            return { currentTab, tabs, itinerary, expenses, newExpense, totalBudget, addExpense, wishes, newWish, addWish };
+            return { currentTab, itinerary, rates, convert };
         }
     }).mount('#app');
 </script>
