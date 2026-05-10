@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>峴港旅遊全攻略 | 專業導遊更新版</title>
+    <title>峴港旅遊助手 | 專業導遊精修版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
@@ -14,9 +14,9 @@
         .tab-active { color: #2563eb; font-weight: 800; border-bottom: 3px solid #2563eb; }
         [v-cloak] { display: none; }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); }
-        .expand-enter-active, .expand-leave-active { transition: all 0.35s ease; max-height: 1500px; overflow: hidden; }
+        .expand-enter-active, .expand-leave-active { transition: all 0.35s ease; max-height: 2000px; overflow: hidden; }
         .expand-enter-from, .expand-leave-to { max-height: 0; opacity: 0; }
-        .time-tag { background: #eff6ff; color: #1e40af; padding: 2px 10px; border-radius: 8px; font-weight: bold; font-size: 11px; margin-right: 8px; }
+        .time-tag { background: #eff6ff; color: #1e40af; padding: 2px 10px; border-radius: 8px; font-weight: bold; font-size: 11px; margin-right: 8px; flex-shrink: 0; }
         .live-clock { font-family: 'Monaco', monospace; }
         .notice-card { border-left: 4px solid #ef4444; }
     </style>
@@ -59,20 +59,15 @@
                 <transition name="expand">
                     <div v-show="expandedDay === i" class="px-4 pb-8 pt-2 bg-slate-50/50 border-t border-gray-100">
                         <div class="space-y-2">
-                            <div v-for="(detail, idx) in item.details" :key="idx" @click="openMap(detail.loc || detail.event)" class="flex items-start p-4 bg-white rounded-[1.5rem] shadow-sm active:bg-blue-50 transition border border-gray-100">
+                            <div v-for="(detail, idx) in item.details" :key="idx" @click="detail.loc ? openMap(detail.loc) : null" class="flex items-start p-4 bg-white rounded-[1.5rem] shadow-sm active:bg-blue-50 transition border border-gray-100">
                                 <span class="time-tag">{{ detail.time }}</span>
                                 <div class="flex-1">
                                     <span v-if="detail.isStart" class="inline-block text-[9px] bg-green-500 text-white px-1.5 py-0.5 rounded mr-1 font-bold">飯店啟程</span>
                                     <p class="text-sm font-bold text-gray-800">{{ detail.event }}</p>
+                                    <p v-if="detail.address" class="text-[9px] text-gray-400 mt-1">{{ detail.address }}</p>
                                     <p v-if="detail.note" class="text-[11px] text-red-500 font-bold mt-1.5 flex items-center gap-1">📢 {{ detail.note }}</p>
                                 </div>
-                            </div>
-                            <div class="pt-6 px-2">
-                                <p class="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">當日回程飯店備選</p>
-                                <div v-for="hotel in hotels" @click="openMap(hotel.name)" class="p-4 bg-red-50/50 border border-red-100 rounded-2xl flex items-center gap-3 active:bg-red-100 mb-2">
-                                    <div class="text-xl">🏨</div>
-                                    <p class="text-[11px] font-bold text-red-800">{{ hotel.name }}</p>
-                                </div>
+                                <div v-if="detail.loc" class="ml-2 text-blue-300">📍</div>
                             </div>
                         </div>
                     </div>
@@ -81,15 +76,13 @@
         </div>
 
         <div v-if="currentTab === 'packing'" class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
-            <div class="mb-6 text-center">
-                <h3 class="font-black text-xl text-gray-800 italic">行前行李檢查</h3>
-            </div>
+            <h3 class="font-black text-xl text-gray-800 italic mb-6 text-center">行前行李檢查</h3>
             <div class="flex gap-2 mb-8">
                 <input v-model="newPackItem" @keyup.enter="addPackItem" type="text" placeholder="輸入行李項目..." class="flex-1 bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm outline-none">
-                <button @click="addPackItem" class="bg-blue-600 text-white px-6 rounded-2xl font-black shadow-lg shadow-blue-200">＋</button>
+                <button @click="addPackItem" class="bg-blue-600 text-white px-6 rounded-2xl font-black shadow-lg">＋</button>
             </div>
             <div class="space-y-3">
-                <div v-for="(item, index) in packingList" :key="index" @click="togglePackItem(index)" :class="{ 'opacity-40 bg-gray-50': item.done }" class="p-4 rounded-2xl border border-gray-100 flex items-center justify-between cursor-pointer">
+                <div v-for="(item, index) in packingList" :key="index" @click="togglePackItem(index)" :class="{ 'opacity-40 bg-gray-50': item.done }" class="p-4 rounded-2xl border border-gray-100 flex items-center justify-between cursor-pointer transition">
                     <div class="flex items-center gap-4">
                         <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center" :class="item.done ? 'bg-green-500 border-green-500' : 'border-gray-200'">
                             <svg v-if="item.done" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
@@ -115,7 +108,7 @@
             </div>
             <div class="grid grid-cols-1 gap-4">
                 <div v-for="(wish, index) in wishes" :key="index" @click="toggleWish(index)" :class="{ 'opacity-40': wish.done }" class="p-4 bg-gray-50 rounded-[2rem] border border-gray-100 flex items-center gap-4 relative">
-                    <img v-if="wish.image" :src="wish.image" class="w-16 h-16 object-cover rounded-xl">
+                    <img v-if="wish.image" :src="wish.image" class="w-16 h-16 object-cover rounded-xl shadow-sm">
                     <div v-else class="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center text-gray-400 text-[10px]">無圖</div>
                     <div class="flex-1"><p class="text-sm font-bold text-gray-700">{{ wish.text }}</p></div>
                     <button @click.stop="removeWish(index)" class="absolute top-2 right-4 text-gray-300">✕</button>
@@ -134,9 +127,8 @@
             <div class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
                 <h3 class="font-black text-[11px] text-red-500 tracking-[0.2em] mb-6 text-center italic">🚩 導遊的叮嚀與禁忌</h3>
                 <div class="space-y-4">
-                    <div class="notice-card bg-red-50/50 p-4 rounded-xl"><p class="text-xs font-bold text-red-800 mb-1">💸 關於小費文化</p><p class="text-[11px] text-gray-600 leading-relaxed">按摩建議 5萬-10萬VND；床頭與行李小費約 2萬VND。不可給硬幣。</p></div>
-                    <div class="notice-card bg-orange-50/50 p-4 rounded-xl border-l-orange-500"><p class="text-xs font-bold text-orange-800 mb-1">👗 景點穿著禁忌</p><p class="text-[11px] text-gray-600 leading-relaxed">參觀寺廟或教堂時，嚴禁穿著無袖、短裙。建議攜帶薄外套。</p></div>
-                    <div class="notice-card bg-green-50/50 p-4 rounded-xl border-l-green-500"><p class="text-xs font-bold text-green-800 mb-1">📱 叫車防詐</p><p class="text-[11px] text-gray-600 leading-relaxed">請下載 Grab App 並綁定信用卡，避免搭乘路邊排班計程車。</p></div>
+                    <div class="notice-card bg-red-50/50 p-4 rounded-xl"><p class="text-xs font-bold text-red-800 mb-1">💸 關於小費文化</p><p class="text-[11px] text-gray-600 leading-relaxed">越式按摩建議小費為 5萬-10萬VND，視服務品質而定。請勿給予硬幣。</p></div>
+                    <div class="notice-card bg-orange-50/50 p-4 rounded-xl border-l-orange-500"><p class="text-xs font-bold text-orange-800 mb-1">👗 景點穿著禁忌</p><p class="text-[11px] text-gray-600 leading-relaxed">參觀寺廟或教堂時，嚴禁穿著無袖、短裙。建議隨身帶一件薄外套。</p></div>
                 </div>
             </div>
         </div>
@@ -161,9 +153,48 @@
             const packingList = ref(getStorage('vn_pack_v1'));
             const wishes = ref(getStorage('vn_wishes_v3'));
             const newPackItem = ref(''); const newWish = ref(''); const previewImage = ref(null);
-            const hotels = [{ name: "Crowne Plaza Danang City Centre by IHG" }, { name: "Hotel Royal Hoi An Danang" }];
-            const phrases = [{ cn: "你好", vn: "Xin chào", pseudo: "心照" }, { cn: "謝謝", vn: "Cảm ơn", pseudo: "感恩" }];
-            const speak = (t) => { const s = window.speechSynthesis; const u = new SpeechSynthesisUtterance(t); u.lang='vi-VN'; s.speak(u); };
+            
+            const itinerary = [
+                { day: "Day 1", title: "啟程 ➔ 會安古鎮", details: [
+                    { time: "13:30", event: "高雄小港機場報到", loc: "Kaohsiung International Airport" },
+                    { time: "16:50", event: "抵達峴港 (DAD)", loc: "Da Nang International Airport" },
+                    { time: "20:00", event: "夜遊會安夜市", loc: "Nguyễn Hoàng Night Market" }
+                ]},
+                { day: "Day 2", title: "水椰林 ➔ 古城文化巡禮", details: [
+                    { time: "08:30", event: "飯店出發", isStart: true },
+                    { time: "09:30", event: "迦南島竹桶船", loc: "Cam Thanh Coconut Village", note: "小費建議: 2萬VND/1美金" },
+                    { time: "14:30", event: "陳富街深度探訪", loc: "Trần Phú, Hội An", address: "Tran Phu St, Hoi An Ancient Town", note: "會安最精華老街" },
+                    { time: "16:00", event: "日本橋 (來遠橋)", loc: "Chùa Cầu (Japanese Covered Bridge)", note: "必拍地標點" },
+                    { time: "18:00", event: "古城自由探訪與晚餐", loc: "Hội An Ancient Town" }
+                ]},
+                { day: "Day 3", title: "野生動物園 ➔ 按摩 ➔ 韓江", details: [
+                    { time: "08:30", event: "飯店出發", isStart: true },
+                    { time: "09:30", event: "南會安野生動物園", loc: "Vinpearl River Safari South Hoi An" },
+                    { time: "17:00", event: "放鬆行程：越式按摩體驗", note: "道地熱石或經絡按摩 (建議按摩前一小時勿進食)" },
+                    { time: "20:00", event: "韓江夜遊：賞龍橋", loc: "Han River Dragon Bridge" }
+                ]},
+                { day: "Day 4", title: "巴拿山全日遊 (小火車/佛手橋)", details: [
+                    { time: "08:30", event: "飯店出發", isStart: true },
+                    { time: "10:00", event: "搭乘巴拿山登山小火車", loc: "Ba Na Hills Funicular" },
+                    { time: "10:30", event: "黃金佛手橋拍照", loc: "Golden Bridge Ba Na Hills" },
+                    { time: "11:30", event: "大佛靈應寺參拜", loc: "Linh Ung Pagoda Ba Na Hills" },
+                    { time: "13:00", event: "山城自助午餐", loc: "Ba Na Hills Sun World" },
+                    { time: "14:30", event: "室內遊樂園自由活動", loc: "Fantasy Park Ba Na Hills" }
+                ]},
+                { day: "Day 5", title: "五行山 ➔ 教堂 ➔ 採買返家", details: [
+                    { time: "08:30", event: "飯店出發", isStart: true },
+                    { time: "09:30", event: "五行山探險之旅", loc: "The Marble Mountains", note: "建議穿著好走的鞋子" },
+                    { time: "11:30", event: "峴港粉紅教堂", loc: "Da Nang Cathedral" },
+                    { time: "13:30", event: "WinMart (原VinMart) 商城採買", loc: "Vincom Plaza Da Nang", note: "大型超市，明碼標價最好買" },
+                    { time: "15:30", event: "前往峴港機場", loc: "Da Nang International Airport" }
+                ]}
+            ];
+
+            const updateVNTime = () => {
+                const o = { timeZone:'Asia/Ho_Chi_Minh', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
+                vnTime.value = new Intl.DateTimeFormat('zh-TW',o).format(new Date());
+            };
+            onMounted(() => { updateVNTime(); setInterval(updateVNTime,1000); });
             const addPackItem = () => { if(newPackItem.value.trim()){ packingList.value.push({text:newPackItem.value,done:false}); newPackItem.value=''; }};
             const togglePackItem = (i) => packingList.value[i].done = !packingList.value[i].done;
             const removePackItem = (i) => packingList.value.splice(i,1);
@@ -173,43 +204,10 @@
             const removeWish = (i) => wishes.value.splice(i,1);
             watch(packingList,(v)=>localStorage.setItem('vn_pack_v1',JSON.stringify(v)),{deep:true});
             watch(wishes,(v)=>localStorage.setItem('vn_wishes_v3',JSON.stringify(v)),{deep:true});
-            const updateVNTime = () => { const o = { timeZone:'Asia/Ho_Chi_Minh', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false }; vnTime.value = new Intl.DateTimeFormat('zh-TW',o).format(new Date()); };
-            onMounted(() => { updateVNTime(); setInterval(updateVNTime,1000); });
-
-            const itinerary = [
-                { day: "Day 1", title: "啟程 ➔ 會安古鎮", details: [
-                    { time: "13:30", event: "高雄小港機場報到", loc: "Kaohsiung International Airport" },
-                    { time: "16:50", event: "抵達峴港 (DAD)", loc: "Da Nang International Airport" },
-                    { time: "20:00", event: "夜遊會安夜市", loc: "Nguyễn Hoàng Night Market" }
-                ]},
-                { day: "Day 2", title: "水椰林 ➔ 會安古城深度遊", details: [
-                    { time: "08:30", event: "飯店出發", isStart: true },
-                    { time: "09:30", event: "迦南島竹桶船", loc: "Cam Thanh Coconut Village", note: "小費建議: 2萬VND/1美金 (不可給硬幣)" },
-                    { time: "14:30", event: "會安古鎮精華：陳富街探訪", loc: "Trần Phú, Hội An", note: "古城內最熱鬧的文化街道" },
-                    { time: "16:00", event: "會安地標：日本橋 (來遠橋)", loc: "Chùa Cầu (Japanese Covered Bridge)", note: "必拍打卡點，也是古城中心" },
-                    { time: "18:00", event: "古城自由活動 & 晚餐", loc: "Hội An Ancient Town" }
-                ]},
-                { day: "Day 3", title: "野生動物園 ➔ 韓江夜色", details: [
-                    { time: "08:30", event: "飯店出發", isStart: true },
-                    { time: "09:30", event: "南會安野生動物園", loc: "Vinpearl River Safari South Hoi An" },
-                    { time: "20:00", event: "韓江巡遊：龍橋", loc: "Han River Dragon Bridge" }
-                ]},
-                { day: "Day 4", title: "巴拿山法國山城", details: [
-                    { time: "08:30", event: "飯店出發", isStart: true },
-                    { time: "10:00", event: "佛手金橋拍照", loc: "Golden Bridge Ba Na Hills" },
-                    { time: "12:00", event: "山城自助午餐", loc: "Ba Na Hills Sun World" }
-                ]},
-                { day: "Day 5", title: "粉紅教堂 ➔ 採買 ➔ 返家", details: [
-                    { time: "08:30", event: "飯店出發", isStart: true },
-                    { time: "11:30", event: "峴港粉紅教堂", loc: "Da Nang Cathedral", note: "服裝不可露肩露腿" },
-                    { time: "13:00", event: "漢市場最後採買", loc: "Han Market Da Nang" }
-                ]}
-            ];
-
             const rates = reactive({ twd: 100, vnd: 7.7 });
             const convert = (t) => { if(t==='twd') rates.vnd=Number((rates.twd*0.077).toFixed(2)); else rates.twd=Number((rates.vnd/0.077).toFixed(0)); };
             const openMap = (q) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`, '_blank');
-            return { currentTab, expandedDay, itinerary, wishes, newWish, addWish, toggleWish, removeWish, rates, convert, openMap, vnTime, phrases, speak, hotels, packingList, newPackItem, addPackItem, togglePackItem, removePackItem, previewImage, handleFileUpload, toggleDay: (i) => expandedDay.value = expandedDay.value === i ? null : i };
+            return { currentTab, expandedDay, itinerary, wishes, newWish, addWish, toggleWish, removeWish, rates, convert, openMap, vnTime, packingList, newPackItem, addPackItem, togglePackItem, removePackItem, previewImage, handleFileUpload, toggleDay: (i) => expandedDay.value = expandedDay.value === i ? null : i };
         }
     }).mount('#app');
 </script>
