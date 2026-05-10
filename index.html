@@ -3,116 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>峴港旅遊助手</title>
+    <title>峴港旅遊助手 | 班機 & 詳細行程</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
-        .header-gradient { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); }
-        .glass-nav { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px); }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; }
+        .header-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%); }
+        .glass-nav { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(12px); }
         .tab-active { color: #fbbf24; border-bottom: 2px solid #fbbf24; }
         [v-cloak] { display: none; }
-        .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
-        /* 展開動畫 */
-        .expand-enter-active, .expand-leave-active { transition: all 0.3s ease; max-height: 500px; overflow: hidden; }
+        .card-shadow { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .expand-enter-active, .expand-leave-active { transition: all 0.35s ease; max-height: 800px; overflow: hidden; }
         .expand-enter-from, .expand-leave-to { max-height: 0; opacity: 0; }
+        .time-tag { background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 6px; font-weight: bold; font-size: 11px; margin-right: 8px; flex-shrink: 0; }
     </style>
 </head>
-<body class="pb-28">
+<body class="pb-32">
 
 <div id="app" v-cloak>
-    <header class="header-gradient pt-12 pb-16 px-6 text-white rounded-b-[3rem] shadow-lg">
-        <div class="flex justify-between items-center">
+    <header class="header-gradient pt-12 pb-20 px-6 text-white rounded-b-[3.5rem] shadow-2xl relative">
+        <div class="flex justify-between items-start">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">峴港五日遊</h1>
-                <p class="text-xs opacity-70 mt-1 tracking-widest text-blue-100">DETAILED ITINERARY</p>
+                <h1 class="text-2xl font-bold tracking-tight">峴港五日遊 <span class="text-blue-400">v2.0</span></h1>
+                <div class="mt-2 flex flex-col gap-1 opacity-80 text-xs">
+                    <p class="flex items-center gap-1">✈️ 5/31 KHH ➔ DAD (15:25 - 16:50)</p>
+                    <p class="flex items-center gap-1">✈️ 6/04 DAD ➔ KHH (17:50 - 21:15)</p>
+                </div>
             </div>
-            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-2 px-3 border border-white/10 text-center">
-                <p class="text-[10px] font-bold">峴港</p>
-                <p class="text-sm">29°C 🌤️</p>
+            <div class="bg-white/10 p-3 rounded-2xl border border-white/10 text-center backdrop-blur-md">
+                <p class="text-[10px] uppercase tracking-tighter opacity-70">Local Time</p>
+                <p class="text-lg font-mono font-bold leading-none mt-1">GMT+7</p>
             </div>
         </div>
     </header>
 
-    <main class="px-5 mt-[-30px] relative z-10">
+    <main class="px-5 mt-[-40px] relative z-10">
         
         <div v-if="currentTab === 'itinerary'" class="space-y-4">
-            <div v-for="(item, i) in itinerary" :key="i" class="bg-white rounded-[2rem] card-shadow overflow-hidden border border-gray-50">
-                <div @click="toggleDay(i)" class="p-5 flex items-center justify-between cursor-pointer active:bg-gray-50">
+            <div v-for="(item, i) in itinerary" :key="i" class="bg-white rounded-[2.5rem] card-shadow overflow-hidden transition-all duration-300" :class="{ 'ring-2 ring-blue-500/20': expandedDay === i }">
+                
+                <div @click="toggleDay(i)" class="p-6 flex items-center justify-between cursor-pointer active:bg-gray-50">
                     <div class="flex-1">
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ item.day }}</span>
-                            <span class="text-[10px] text-gray-400 font-medium">{{ item.date }}</span>
+                            <span class="text-[10px] font-black text-white bg-blue-600 px-2 py-0.5 rounded-full uppercase italic">{{ item.day }}</span>
+                            <span class="text-[10px] text-gray-400 font-bold tracking-widest">{{ item.date }}</span>
                         </div>
-                        <h3 class="font-bold text-gray-800 mt-2 leading-snug">{{ item.title }}</h3>
+                        <h3 class="font-bold text-gray-800 mt-2 text-lg">{{ item.title }}</h3>
                     </div>
                     <div class="flex items-center gap-3">
-                        <button @click.stop="openMap(item.searchKey)" class="bg-green-500 text-white p-3 rounded-xl shadow-md active:scale-90 transition">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                        <button @click.stop="openMap(item.searchKey)" class="bg-green-500 text-white p-3.5 rounded-2xl shadow-lg shadow-green-100 active:scale-90 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                         </button>
-                        <svg class="w-5 h-5 text-gray-300 transition-transform duration-300" :class="{ 'rotate-180': expandedDay === i }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                        </svg>
                     </div>
                 </div>
 
                 <transition name="expand">
-                    <div v-show="expandedDay === i" class="px-6 pb-6 pt-2 bg-slate-50/50 border-t border-gray-50">
-                        <ul class="space-y-3">
-                            <li v-for="(detail, idx) in item.details" :key="idx" class="flex gap-3 text-sm">
-                                <span class="text-blue-400 font-bold">•</span>
-                                <span class="text-gray-600 leading-relaxed">{{ detail }}</span>
-                            </li>
-                        </ul>
+                    <div v-show="expandedDay === i" class="px-6 pb-8 pt-2 bg-slate-50 border-t border-gray-100">
+                        <div class="space-y-4">
+                            <div v-for="(detail, idx) in item.details" :key="idx" class="flex items-start">
+                                <span class="time-tag">{{ detail.time }}</span>
+                                <div class="flex-1">
+                                    <p class="text-sm font-bold text-gray-700 leading-tight">{{ detail.event }}</p>
+                                    <p v-if="detail.note" class="text-[11px] text-gray-400 mt-1 leading-snug">{{ detail.note }}</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </transition>
             </div>
         </div>
 
-        <div v-if="currentTab === 'wishlist'" class="bg-white rounded-[2.5rem] p-6 card-shadow border border-gray-50">
-            <h3 class="font-bold text-xl mb-4 text-gray-800">🛒 願望清單</h3>
-            <div class="flex gap-2 mb-6">
-                <input v-model="newWish" @keyup.enter="addWish" type="text" placeholder="想買什麼？" class="flex-1 bg-gray-50 border-none rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-blue-100">
-                <button @click="addWish" class="bg-blue-600 text-white px-4 rounded-xl">+</button>
+        <div v-if="currentTab === 'wishlist'" class="bg-white rounded-[2.5rem] p-8 card-shadow">
+            <h3 class="font-black text-xl mb-6 text-gray-800 flex items-center gap-2 italic">SHOPPING LIST</h3>
+            <div class="flex gap-2 mb-8">
+                <input v-model="newWish" @keyup.enter="addWish" type="text" placeholder="Add something..." class="flex-1 bg-gray-100 border-none rounded-2xl p-4 text-sm outline-none focus:ring-2 focus:ring-blue-200">
+                <button @click="addWish" class="bg-blue-600 text-white px-6 rounded-2xl font-black">+</button>
             </div>
-            <div class="space-y-2">
-                <div v-for="(wish, index) in wishes" :key="index" @click="toggleWish(index)" :class="{ 'opacity-40 line-through': wish.done }" class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl">
-                    <span class="text-sm">{{ wish.text }}</span>
-                    <button @click.stop="removeWish(index)" class="text-gray-300">✕</button>
+            <div class="space-y-3">
+                <div v-for="(wish, index) in wishes" :key="index" @click="toggleWish(index)" :class="{ 'opacity-30 line-through': wish.done }" class="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                    <span class="text-sm font-medium">{{ wish.text }}</span>
+                    <button @click.stop="removeWish(index)" class="text-red-300 text-xs font-bold">REMOVE</button>
                 </div>
             </div>
         </div>
 
         <div v-if="currentTab === 'exchange'" class="bg-white rounded-[2.5rem] p-8 card-shadow">
-            <h3 class="font-bold text-xl mb-6 text-gray-800">💰 匯率換算</h3>
-            <div class="space-y-5">
-                <div>
-                    <label class="text-xs text-gray-400 ml-2">台幣 TWD</label>
-                    <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-2xl font-bold text-blue-600 outline-none">
+            <h3 class="font-black text-xl mb-8 text-gray-800 italic text-center">CURRENCY</h3>
+            <div class="space-y-6">
+                <div class="relative">
+                    <label class="absolute -top-2 left-4 bg-white px-2 text-[10px] font-black text-blue-500 uppercase">Taiwan Dollar</label>
+                    <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-5 bg-gray-50 rounded-3xl border-2 border-gray-50 text-2xl font-black text-blue-600 outline-none focus:border-blue-100">
                 </div>
-                <div class="text-center text-gray-200">⇅</div>
-                <div>
-                    <label class="text-xs text-gray-400 ml-2">越南盾 VND (萬)</label>
-                    <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none text-2xl font-bold text-green-600 outline-none">
+                <div class="text-center font-black text-gray-300 text-xl">↕</div>
+                <div class="relative">
+                    <label class="absolute -top-2 left-4 bg-white px-2 text-[10px] font-black text-green-500 uppercase">Vietnam Dong (萬)</label>
+                    <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-5 bg-green-50 rounded-3xl border-2 border-green-50 text-2xl font-black text-green-600 outline-none focus:border-green-100">
                 </div>
+                <p class="text-center text-[10px] text-gray-400 font-bold tracking-widest opacity-50">RATE: 1 TWD ≈ 770 VND</p>
             </div>
         </div>
 
     </main>
 
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-sm glass-nav rounded-full px-2 py-3 flex justify-around shadow-2xl z-50 border border-white/10">
-        <button @click="currentTab = 'itinerary'" :class="{ 'tab-active': currentTab === 'itinerary' }" class="flex flex-col items-center text-gray-500 px-4 py-1">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-            <span class="text-[9px] mt-1 font-bold">詳細行程</span>
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] glass-nav rounded-full px-2 py-4 flex justify-around shadow-2xl z-50">
+        <button @click="currentTab = 'itinerary'" :class="{ 'tab-active': currentTab === 'itinerary' }" class="flex flex-col items-center text-gray-500 px-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+            <span class="text-[9px] mt-2 font-black uppercase tracking-tighter">Guide</span>
         </button>
-        <button @click="currentTab = 'wishlist'" :class="{ 'tab-active': currentTab === 'wishlist' }" class="flex flex-col items-center text-gray-500 px-4 py-1">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-            <span class="text-[9px] mt-1 font-bold">願望清單</span>
+        <button @click="currentTab = 'wishlist'" :class="{ 'tab-active': currentTab === 'wishlist' }" class="flex flex-col items-center text-gray-500 px-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+            <span class="text-[9px] mt-2 font-black uppercase tracking-tighter">Shop</span>
         </button>
-        <button @click="currentTab = 'exchange'" :class="{ 'tab-active': currentTab === 'exchange' }" class="flex flex-col items-center text-gray-500 px-4 py-1">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span class="text-[9px] mt-1 font-bold">即時換匯</span>
+        <button @click="currentTab = 'exchange'" :class="{ 'tab-active': currentTab === 'exchange' }" class="flex flex-col items-center text-gray-500 px-4">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="text-[9px] mt-2 font-black uppercase tracking-tighter">Calc</span>
         </button>
     </nav>
 </div>
@@ -122,68 +127,65 @@
     createApp({
         setup() {
             const currentTab = ref('itinerary');
-            const expandedDay = ref(0); // 預設展開第一天
+            const expandedDay = ref(0);
 
-            const toggleDay = (index) => {
-                expandedDay.value = expandedDay.value === index ? null : index;
-            };
+            const toggleDay = (index) => { expandedDay.value = expandedDay.value === index ? null : index; };
 
             const itinerary = [
                 { 
-                    day: "Day 1", date: "5/31", title: "小港機場出發 ➔ 會安古鎮夜遊", 
+                    day: "Day 1", date: "5/31 (Sun)", title: "啟程 ➔ 會安古鎮", 
                     details: [
-                        "12:00 高雄小港機場集合",
-                        "搭乘航班前往峴港 (Danang)",
-                        "專車前往會安 (Hoi An) 辦理入住",
-                        "夜遊會安古鎮：福建會館、日本橋、陳家祠堂",
-                        "Nguyễn Hoàng 夜市燈籠拍照、放水燈體驗"
+                        { time: "13:30", event: "高雄小港機場報到", note: "建議提前兩小時抵達國際線櫃檯" },
+                        { time: "15:25", event: "航班起飛 (KHH)", note: "起飛前往峴港，飛行約 2.5 小時" },
+                        { time: "16:50", event: "抵達峴港 (DAD)", note: "辦理入境、領取行李及網卡" },
+                        { time: "18:30", event: "會安古鎮晚餐", note: "享用古鎮特色料理：高樓麵、白玫瑰" },
+                        { time: "20:00", event: "夜遊會安夜市", note: "燈籠牆拍照、放水燈體驗" }
                     ],
                     searchKey: "Nguyễn Hoàng, An Hội, Hội An, Vietnam"
                 },
                 { 
-                    day: "Day 2", date: "6/01", title: "迦南島體驗 ➔ 燈籠 DIY", 
+                    day: "Day 2", date: "6/01 (Mon)", title: "水椰林 ➔ 古鎮手作", 
                     details: [
-                        "迦南島 (Cam Thanh) 竹桶船體驗",
-                        "樂釣螃蟹與傳統網魚演示",
-                        "手作燈籠 DIY 體驗、下午茶時間",
-                        "會安傳統市場深度探索"
+                        { time: "09:00", event: "迦南島竹桶船", note: "體驗旋轉船及傳統網魚演示" },
+                        { time: "12:00", event: "島上農家午餐", note: "海鮮料理與特色越式料理" },
+                        { time: "15:00", event: "會安手作燈籠 DIY", note: "親手製作專屬的越南燈籠" },
+                        { time: "18:00", event: "印象會安表演", note: "欣賞宏偉的實景演出 (視行程安排)" }
                     ],
                     searchKey: "Cam Thanh Coconut Village"
                 },
                 { 
-                    day: "Day 3", date: "6/02", title: "南會安野生動物園 ➔ 韓江遊船", 
+                    day: "Day 3", date: "6/02 (Tue)", title: "野生動物園 ➔ 韓江夜色", 
                     details: [
-                        "Vinpearl River Safari：坐船看野生動物",
-                        "漫步南會安主題樂園、傳統藝術表演",
-                        "回到峴港市區、晚餐時光",
-                        "夜間韓江 (Han River) 巡遊，欣賞龍橋燈光秀"
+                        { time: "09:30", event: "南會安野生動物園", note: "乘坐河道遊船近距離觀看野生動物" },
+                        { time: "13:30", event: "主題樂園自由活動", note: "民俗文化村拍照、體驗民藝" },
+                        { time: "17:30", event: "回到峴港市區", note: "市區晚餐後準備遊船" },
+                        { time: "20:00", event: "韓江巡遊之旅", note: "從船上觀賞龍橋噴火(週五六日)" }
                     ],
                     searchKey: "Vinpearl River Safari South Hoi An"
                 },
                 { 
-                    day: "Day 4", date: "6/03", title: "巴拿山法國山城 ➔ 佛手橋", 
+                    day: "Day 4", date: "6/03 (Wed)", title: "巴拿山雲端之旅", 
                     details: [
-                        "巴拿山 (Ba Na Hills) 登頂纜車",
-                        "漫步佛手橋 (Golden Bridge) 雲端絕景",
-                        "法國山城、靈應寺拍照、Fantasy Park 遊樂園",
-                        "品嚐山城自助午餐"
+                        { time: "08:30", event: "搭乘全球最長纜車", note: "直達海拔 1487 公尺的高山避暑勝地" },
+                        { time: "10:00", event: "佛手金橋拍照", note: "必踩景點！如在雲端漫步" },
+                        { time: "12:00", event: "山城自助午餐", note: "享用多樣化國際美食自助餐" },
+                        { time: "14:30", event: "室內遊樂園 Fantasy Park", note: "多項冒險設施與拍照景點" }
                     ],
                     searchKey: "Ba Na Hills Sun World"
                 },
                 { 
-                    day: "Day 5", date: "6/04", title: "五行山 ➔ 粉紅教堂 ➔ 賦歸", 
+                    day: "Day 5", date: "6/04 (Thu)", title: "粉紅教堂 ➔ 採買 ➔ 返家", 
                     details: [
-                        "五行山 (Marble Mountains) 搭乘電梯登高",
-                        "參觀玄空洞、眺望峴港海岸線",
-                        "峴港粉紅教堂 (Da Nang Cathedral)",
-                        "漢市場 (Han Market) 最後採買",
-                        "前往峴港機場，帶著滿滿回憶回高雄"
+                        { time: "09:30", event: "五行山登高", note: "搭乘景觀電梯，參觀靈應寺、玄空洞" },
+                        { time: "11:30", event: "峴港粉紅教堂", note: "充滿法式風情的夢幻地標" },
+                        { time: "13:00", event: "漢市場最後血拼", note: "採買咖啡豆、乾貨、編織包" },
+                        { time: "15:30", event: "前往峴港機場", note: "辦理登機報到手續" },
+                        { time: "17:50", event: "航班起飛 (DAD)", note: "帶著戰利品與回憶返回高雄" }
                     ],
                     searchKey: "Da Nang Cathedral"
                 }
             ];
 
-            // 願望清單持久化
             const wishes = ref(JSON.parse(localStorage.getItem('trip-wishes') || '[]'));
             const newWish = ref('');
             const addWish = () => { if (newWish.value.trim()) { wishes.value.push({ text: newWish.value, done: false }); newWish.value = ''; } };
@@ -191,14 +193,13 @@
             const removeWish = (index) => { wishes.value.splice(index, 1); };
             watch(wishes, (val) => { localStorage.setItem('trip-wishes', JSON.stringify(val)); }, { deep: true });
 
-            // 換匯計算
             const rates = reactive({ twd: 100, vnd: 7.7 });
             const convert = (type) => {
                 if (type === 'twd') rates.vnd = Number((rates.twd * 0.077).toFixed(2));
                 else rates.twd = Number((rates.vnd / 0.077).toFixed(0));
             };
 
-            const openMap = (query) => { window.open(`http://googleusercontent.com/maps.google.com/6{encodeURIComponent(query)}`, '_blank'); };
+            const openMap = (query) => { window.open(`http://googleusercontent.com/maps.google.com/8{encodeURIComponent(query)}`, '_blank'); };
 
             return { currentTab, expandedDay, toggleDay, itinerary, wishes, newWish, addWish, toggleWish, removeWish, rates, convert, openMap };
         }
