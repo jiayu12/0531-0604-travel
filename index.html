@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>峴港旅遊助手 | 2026 專業導遊旗艦版</title>
+    <title>峴港旅遊全攻略 | 終極導覽版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
@@ -28,7 +28,7 @@
         <div class="flex justify-between items-start">
             <div class="flex-1">
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="bg-yellow-400 text-blue-900 text-[10px] font-black px-2 py-0.5 rounded">2026 EDITION</span>
+                    <span class="bg-yellow-400 text-blue-900 text-[10px] font-black px-2 py-0.5 rounded">專業導覽模式</span>
                     <h1 class="text-2xl font-bold tracking-tight">峴港五日夏季遊</h1>
                 </div>
                 <div class="space-y-1 opacity-90 text-[11px] bg-black/10 p-3 rounded-2xl border border-white/10 inline-block">
@@ -76,9 +76,9 @@
         </div>
 
         <div v-if="currentTab === 'packing'" class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
-            <h3 class="font-black text-xl text-gray-800 mb-6 text-center italic">行李清單</h3>
+            <h3 class="font-black text-xl text-gray-800 italic mb-6 text-center">🎒 行前行李檢查</h3>
             <div class="flex gap-2 mb-8">
-                <input v-model="newPackItem" @keyup.enter="addPackItem" type="text" placeholder="需要帶什麼？" class="flex-1 bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm outline-none">
+                <input v-model="newPackItem" @keyup.enter="addPackItem" type="text" placeholder="輸入項目 (如: 防曬、轉接頭)..." class="flex-1 bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm outline-none">
                 <button @click="addPackItem" class="bg-blue-600 text-white px-6 rounded-2xl font-black shadow-lg">＋</button>
             </div>
             <div class="space-y-3">
@@ -89,48 +89,48 @@
                         </div>
                         <span class="text-sm font-bold text-gray-700" :class="{ 'line-through': item.done }">{{ item.text }}</span>
                     </div>
-                    <button @click.stop="removePackItem(index)" class="text-gray-300 p-2 text-xl">×</button>
+                    <button @click.stop="removePackItem(index)" class="text-gray-300 p-2">✕</button>
                 </div>
             </div>
         </div>
 
         <div v-if="currentTab === 'shop'" class="bg-white rounded-[3rem] p-8 card-shadow border border-gray-50">
-            <h3 class="font-black text-xl mb-6 text-gray-800 text-center italic">願望清單</h3>
+            <h3 class="font-black text-xl mb-6 text-gray-800 text-center">🛍️ 購物願望 & 截圖</h3>
             <div class="space-y-4 mb-10">
-                <input v-model="newWish" type="text" placeholder="品名或品牌..." class="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm outline-none">
+                <input v-model="newWish" type="text" placeholder="想買什麼伴手禮？" class="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm outline-none">
                 <div class="flex gap-2">
                     <label class="flex-1 flex items-center justify-center gap-2 bg-slate-100 text-slate-600 py-4 rounded-2xl text-xs font-bold cursor-pointer">
                         📸 附加圖片 <input type="file" accept="image/*" class="hidden" @change="handleFileUpload">
                     </label>
-                    <button @click="addWish" class="bg-blue-600 text-white px-8 rounded-2xl font-black">新增項目</button>
+                    <button @click="addWish" class="bg-blue-600 text-white px-8 rounded-2xl font-black">新增</button>
                 </div>
-                <div v-if="previewImage" class="relative w-24 h-24 mx-auto mt-2"><img :src="previewImage" class="w-full h-full object-cover rounded-2xl border-4 border-white shadow-md"></div>
+                <div v-if="previewImage" class="relative w-20 h-20 mx-auto mt-2"><img :src="previewImage" class="w-full h-full object-cover rounded-2xl border-4 border-white shadow-md"></div>
             </div>
             <div class="grid grid-cols-1 gap-4">
                 <div v-for="(wish, index) in wishes" :key="index" @click="toggleWish(index)" :class="{ 'opacity-40': wish.done }" class="p-4 bg-gray-50 rounded-[2rem] border border-gray-100 flex items-center gap-4 relative">
                     <img v-if="wish.image" :src="wish.image" class="w-16 h-16 object-cover rounded-xl shadow-sm">
-                    <div v-else class="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center text-gray-400 text-[10px]">無圖片</div>
+                    <div v-else class="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center text-gray-400 text-[10px]">無圖</div>
                     <div class="flex-1"><p class="text-sm font-bold text-gray-700">{{ wish.text }}</p></div>
-                    <button @click.stop="removeWish(index)" class="absolute top-4 right-4 text-gray-300">×</button>
+                    <button @click.stop="removeWish(index)" class="absolute top-2 right-4 text-gray-300">✕</button>
                 </div>
             </div>
         </div>
 
         <div v-if="currentTab === 'tips'" class="space-y-6">
             <div class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
-                <h3 class="font-black text-[11px] mb-6 text-blue-600 tracking-[0.2em] uppercase text-center">💸 2026 匯率快速換算</h3>
+                <h3 class="font-black text-[11px] mb-6 text-blue-600 tracking-[0.2em] uppercase text-center">💸 越幣快速換算</h3>
                 <div class="flex items-center gap-4">
                     <div class="flex-1"><label class="text-[10px] font-bold text-gray-400 ml-2">台幣 TWD</label><input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-blue-600 text-xl"></div>
                     <div class="flex-1"><label class="text-[10px] font-bold text-gray-400 ml-2">越盾 VND (萬)</label><input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none font-bold text-green-600 text-xl"></div>
                 </div>
-                <p class="text-[9px] text-gray-400 mt-4 text-center">註：估算基準為 1 TWD ≈ 770 VND (7.7萬)</p>
+                <p class="text-center text-[10px] text-gray-400 mt-4 italic">*匯率僅供參考，請依現場為準</p>
             </div>
             <div class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
-                <h3 class="font-black text-[11px] text-red-500 tracking-[0.2em] mb-6 text-center italic">🚩 導遊必看叮嚀</h3>
+                <h3 class="font-black text-[11px] text-red-500 tracking-[0.2em] mb-6 text-center italic">💡 導遊叮嚀與禁忌</h3>
                 <div class="space-y-4">
-                    <div class="notice-card bg-red-50/50 p-4 rounded-xl"><p class="text-xs font-bold text-red-800 mb-1">💸 小費建議</p><p class="text-[11px] text-gray-600">按摩：5萬-10萬VND。床頭：2萬VND。切記不給硬幣。</p></div>
-                    <div class="notice-card bg-orange-50/50 p-4 rounded-xl border-l-orange-500"><p class="text-xs font-bold text-orange-800 mb-1">👗 寺廟教堂禁忌</p><p class="text-[11px] text-gray-600">嚴禁無袖、短裙。參觀粉紅教堂與靈應寺時建議帶件薄外套遮擋。</p></div>
-                    <div class="notice-card bg-blue-50/50 p-4 rounded-xl border-l-blue-500"><p class="text-xs font-bold text-blue-800 mb-1">🚗 交通建議</p><p class="text-[11px] text-gray-600">一律使用 Grab App，綁定信用卡可避免找零產生的匯率糾紛。</p></div>
+                    <div class="notice-card bg-red-50/50 p-4 rounded-xl"><p class="text-xs font-bold text-red-800 mb-1">💸 關於小費文化</p><p class="text-[11px] text-gray-600 leading-relaxed">按摩建議小費為 5萬-10萬VND；床頭與行李小費約 2萬VND。不可給硬幣。</p></div>
+                    <div class="notice-card bg-orange-50/50 p-4 rounded-xl border-l-orange-500"><p class="text-xs font-bold text-orange-800 mb-1">👗 景點穿著禁忌</p><p class="text-[11px] text-gray-600 leading-relaxed">參觀寺廟、教堂或五行山時，嚴禁穿著無袖或短裙。建議攜帶薄外套遮蔽。</p></div>
+                    <div class="notice-card bg-green-50/50 p-4 rounded-xl border-l-green-500"><p class="text-xs font-bold text-green-800 mb-1">📱 交通安全</p><p class="text-[11px] text-gray-600 leading-relaxed">請下載 Grab App 叫車以避免詐騙。橫越馬路時請保持穩定前行，騎士會繞過您。</p></div>
                 </div>
             </div>
         </div>
@@ -151,91 +151,65 @@
             const currentTab = ref('guide');
             const expandedDay = ref(0);
             const vnTime = ref('--:--:--');
-            
-            // 本地存儲初始化
             const getStorage = (k) => JSON.parse(localStorage.getItem(k) || '[]');
-            const packingList = ref(getStorage('vn_pack_2026'));
-            const wishes = ref(getStorage('vn_wishes_2026'));
-            const newPackItem = ref(''); 
-            const newWish = ref(''); 
-            const previewImage = ref(null);
-
-            // 匯率
-            const rates = reactive({ twd: 100, vnd: 7.7 });
-            const convert = (t) => {
-                if(t === 'twd') rates.vnd = Number((rates.twd * 0.077).toFixed(2));
-                else rates.twd = Number((rates.vnd / 0.077).toFixed(0));
-            };
-
-            // 行程數據
+            const packingList = ref(getStorage('vn_pack_v1'));
+            const wishes = ref(getStorage('vn_wishes_v3'));
+            const newPackItem = ref(''); const newWish = ref(''); const previewImage = ref(null);
+            
             const itinerary = [
                 { day: "Day 1", title: "啟程 ➔ 會安古鎮", details: [
-                    { time: "13:30", event: "高雄小港機場報到", loc: "Kaohsiung International Airport" },
+                    { time: "13:30", event: "高雄小港機場報到 (5/31)", loc: "Kaohsiung International Airport" },
                     { time: "16:50", event: "抵達峴港 (DAD)", loc: "Da Nang International Airport" },
                     { time: "20:00", event: "夜遊會安夜市", loc: "Nguyễn Hoàng Night Market" }
                 ]},
-                { day: "Day 2", title: "水椰林 ➔ 古城巡禮", details: [
+                { day: "Day 2", title: "水椰林 ➔ 古城文化深度遊", details: [
                     { time: "08:30", event: "飯店出發", isStart: true },
-                    { time: "09:30", event: "迦南島竹桶船", loc: "Cam Thanh Coconut Village", note: "小費建議: 2萬VND" },
-                    { time: "14:30", event: "陳富街、日本橋", loc: "Trần Phú, Hội An", note: "必拍地標點" },
-                    { time: "18:00", event: "古城自由探訪", loc: "Hội An Ancient Town" }
+                    { time: "09:30", event: "迦南島竹桶船體驗", loc: "Cam Thanh Coconut Village" },
+                    { time: "14:30", event: "會安精華：陳富街深度探訪", loc: "Trần Phú, Hội An", address: "Tran Phu St, Hoi An Ancient Town", note: "古色古香的經典老街" },
+                    { time: "16:00", event: "地標：日本橋 (來遠橋)", loc: "Chùa Cầu (Japanese Covered Bridge)", note: "古城必拍中心點" },
+                    { time: "18:00", event: "古城自由活動與特色晚餐", loc: "Hội An Ancient Town" }
                 ]},
-                { day: "Day 3", title: "野生動物園 ➔ 按摩 ➔ 韓江", details: [
+                { day: "Day 3", title: "野生動物園 ➔ 越式按摩 ➔ 龍橋", details: [
+                    { time: "08:30", event: "飯店出發", isStart: true },
                     { time: "09:30", event: "南會安野生動物園", loc: "Vinpearl River Safari South Hoi An" },
-                    { time: "17:00", event: "放鬆：越式按摩", note: "建議按摩前一小時勿進食" },
-                    { time: "20:00", event: "韓江夜遊：賞龍橋", loc: "Han River Dragon Bridge" }
+                    { time: "17:00", event: "放鬆：越式按摩體驗", note: "道地越式舒壓，緩解雙腿疲勞" },
+                    { time: "20:00", event: "韓江夜遊：賞龍橋表演", loc: "Han River Dragon Bridge" }
                 ]},
-                { day: "Day 4", title: "巴拿山全日遊 (佛手橋)", details: [
-                    { time: "10:00", event: "巴拿山登山小火車", loc: "Ba Na Hills Funicular" },
-                    { time: "10:30", event: "黃金佛手橋拍照", loc: "Golden Bridge Ba Na Hills" },
-                    { time: "13:00", event: "山城自助午餐", loc: "Ba Na Hills Sun World" },
-                    { time: "14:30", event: "Fantasy Park 自由活動", loc: "Fantasy Park Ba Na Hills" }
+                { day: "Day 4", title: "巴拿山全攻略 ➔ 韓江畔漫步", details: [
+                    { time: "08:30", event: "飯店出發", isStart: true },
+                    { time: "10:00", event: "巴拿山小火車 & 佛手橋", loc: "Golden Bridge Ba Na Hills" },
+                    { time: "11:30", event: "大佛靈應寺參拜", loc: "Linh Ung Pagoda Ba Na Hills" },
+                    { time: "13:00", event: "雲端午餐自助饗宴", loc: "Ba Na Hills Sun World" },
+                    { time: "14:30", event: "Fantasy Park 室內遊樂園", loc: "Fantasy Park Ba Na Hills" },
+                    { time: "19:30", event: "韓江畔漫步及夜景觀賞", loc: "Han River Danang", note: "感受峴港璀璨夜色與江風" }
                 ]},
-                { day: "Day 5", title: "五行山 ➔ 教堂 ➔ 返港", details: [
-                    { time: "09:30", event: "五行山探險", loc: "The Marble Mountains", note: "建議穿好走的鞋" },
-                    { time: "11:30", event: "峴港粉紅教堂", loc: "Da Nang Cathedral" },
-                    { time: "13:30", event: "WinMart 超市採買", loc: "Vincom Plaza Da Nang", note: "腰果、咖啡買齊處" },
-                    { time: "15:30", event: "前往峴港機場", loc: "Da Nang International Airport" }
+                { day: "Day 5", title: "五行山 ➔ 教堂 ➔ WinMart 採買", details: [
+                    { time: "08:30", event: "飯店出發", isStart: true },
+                    { time: "09:30", event: "五行山探險之旅", loc: "The Marble Mountains", note: "建議穿好走的運動鞋" },
+                    { time: "11:30", event: "峴港粉紅教堂拍照", loc: "Da Nang Cathedral" },
+                    { time: "13:30", event: "WinMart 商城最後採買 (原VinMart)", loc: "Vincom Plaza Da Nang", note: "大超市購買伴手禮最划算" },
+                    { time: "17:50", event: "峴港機場 (DAD) ➔ 高雄 (6/04)", loc: "Da Nang International Airport" }
                 ]}
             ];
 
-            // 峴港時間同步
             const updateVNTime = () => {
                 const o = { timeZone:'Asia/Ho_Chi_Minh', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
-                vnTime.value = new Intl.DateTimeFormat('zh-TW', o).format(new Date());
+                vnTime.value = new Intl.DateTimeFormat('zh-TW',o).format(new Date());
             };
-
-            // 行李檢查邏輯
-            const addPackItem = () => { if(newPackItem.value.trim()){ packingList.value.push({text:newPackItem.value, done:false}); newPackItem.value=''; }};
+            onMounted(() => { updateVNTime(); setInterval(updateVNTime,1000); });
+            const addPackItem = () => { if(newPackItem.value.trim()){ packingList.value.push({text:newPackItem.value,done:false}); newPackItem.value=''; }};
             const togglePackItem = (i) => packingList.value[i].done = !packingList.value[i].done;
             const removePackItem = (i) => packingList.value.splice(i,1);
-
-            // 願望清單邏輯
-            const handleFileUpload = (e) => {
-                const f = e.target.files[0]; if(!f) return;
-                const r = new FileReader(); r.onload = (ev) => previewImage.value = ev.target.result; r.readAsDataURL(f);
-            };
-            const addWish = () => {
-                if(newWish.value.trim() || previewImage.value){
-                    wishes.value.push({ text: newWish.value || '未命名項目', image: previewImage.value, done: false });
-                    newWish.value=''; previewImage.value=null;
-                }
-            };
+            const handleFileUpload = (e) => { const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=(ev)=>previewImage.value=ev.target.result; r.readAsDataURL(f); };
+            const addWish = () => { if(newWish.value.trim()||previewImage.value){ wishes.value.push({text:newWish.value||'未命名',image:previewImage.value,done:false}); newWish.value=''; previewImage.value=null; }};
             const toggleWish = (i) => wishes.value[i].done = !wishes.value[i].done;
             const removeWish = (i) => wishes.value.splice(i,1);
-
-            // 監聽並儲存
-            watch(packingList, (v) => localStorage.setItem('vn_pack_2026', JSON.stringify(v)), { deep: true });
-            watch(wishes, (v) => localStorage.setItem('vn_wishes_2026', JSON.stringify(v)), { deep: true });
-
-            onMounted(() => { updateVNTime(); setInterval(updateVNTime, 1000); });
-
-            return {
-                currentTab, expandedDay, itinerary, vnTime, packingList, newPackItem, wishes, newWish, previewImage, rates,
-                addPackItem, togglePackItem, removePackItem, handleFileUpload, addWish, toggleWish, removeWish, convert,
-                toggleDay: (i) => expandedDay.value = expandedDay.value === i ? null : i,
-                openMap: (q) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`, '_blank')
-            };
+            watch(packingList,(v)=>localStorage.setItem('vn_pack_v1',JSON.stringify(v)),{deep:true});
+            watch(wishes,(v)=>localStorage.setItem('vn_wishes_v3',JSON.stringify(v)),{deep:true});
+            const rates = reactive({ twd: 100, vnd: 7.7 });
+            const convert = (t) => { if(t==='twd') rates.vnd=Number((rates.twd*0.077).toFixed(2)); else rates.twd=Number((rates.vnd/0.077).toFixed(0)); };
+            const openMap = (q) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`, '_blank');
+            return { currentTab, expandedDay, itinerary, wishes, newWish, addWish, toggleWish, removeWish, rates, convert, openMap, vnTime, packingList, newPackItem, addPackItem, togglePackItem, removePackItem, previewImage, handleFileUpload, toggleDay: (i) => expandedDay.value = expandedDay.value === i ? null : i };
         }
     }).mount('#app');
 </script>
