@@ -15,6 +15,8 @@
         [v-cloak] { display: none; }
         .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
         .nav-btn:active { transform: scale(0.9); transition: 0.1s; }
+        .wish-item { transition: all 0.2s; }
+        .wish-item.done { opacity: 0.5; text-decoration: line-through; }
     </style>
 </head>
 <body class="pb-28">
@@ -24,11 +26,11 @@
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">峴港五日遊</h1>
-                <p class="text-xs opacity-70 mt-1 tracking-widest text-blue-100">DA NANG TRAVEL • 2026</p>
+                <p class="text-xs opacity-70 mt-1 tracking-widest text-blue-100">WISHLIST & TRAVEL GUIDE</p>
             </div>
-            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-2 px-3 border border-white/10">
-                <p class="text-[10px] font-bold opacity-80">峴港即時</p>
-                <p class="text-sm font-bold">29°C 🌤️</p>
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-2 px-3 border border-white/10 text-center">
+                <p class="text-[10px] font-bold opacity-80">今日</p>
+                <p class="text-sm font-bold">29°C</p>
             </div>
         </div>
     </header>
@@ -44,19 +46,39 @@
                     </div>
                     <h3 class="font-bold text-gray-800 mt-2 leading-snug">{{ item.title }}</h3>
                     <p class="text-[10px] text-gray-400 mt-1 flex items-start gap-1">
-                        <svg class="w-3 h-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        </svg>
+                        <svg class="w-3 h-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                         <span>{{ item.locationDisplay }}</span>
                     </p>
                 </div>
-                
-                <button @click="openMap(item.searchKey)" 
-                        class="nav-btn bg-green-500 hover:bg-green-600 text-white p-4 rounded-2xl shadow-lg shadow-green-100 flex-shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                    </svg>
+                <button @click="openMap(item.searchKey)" class="nav-btn bg-green-500 text-white p-4 rounded-2xl shadow-lg flex-shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
                 </button>
+            </div>
+        </div>
+
+        <div v-if="currentTab === 'wishlist'" class="space-y-4">
+            <div class="bg-white rounded-[2.5rem] p-6 card-shadow border border-gray-50">
+                <h3 class="font-bold text-xl mb-4 text-gray-800 flex items-center gap-2">🛒 願望清單</h3>
+                
+                <div class="flex gap-2 mb-6">
+                    <input v-model="newWish" @keyup.enter="addWish" type="text" placeholder="想買什麼？" class="flex-1 bg-gray-50 border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-blue-100 outline-none">
+                    <button @click="addWish" class="bg-blue-600 text-white px-4 rounded-xl font-bold">+</button>
+                </div>
+
+                <div class="space-y-3">
+                    <div v-for="(wish, index) in wishes" :key="index" @click="toggleWish(index)" :class="{ 'done': wish.done }" class="wish-item flex items-center justify-between p-4 bg-gray-50 rounded-2xl cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <div :class="wish.done ? 'bg-green-500' : 'bg-white border-2 border-gray-200'" class="w-5 h-5 rounded-full flex items-center justify-center transition-colors">
+                                <svg v-if="wish.done" class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"></path></svg>
+                            </div>
+                            <span class="text-sm font-medium text-gray-700">{{ wish.text }}</span>
+                        </div>
+                        <button @click.stop="removeWish(index)" class="text-gray-300 hover:text-red-400 p-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                    <p v-if="wishes.length === 0" class="text-center text-gray-400 text-xs py-10">清單空空的，快去血拼吧！</p>
+                </div>
             </div>
         </div>
 
@@ -65,93 +87,78 @@
             <div class="space-y-5">
                 <div>
                     <label class="text-xs text-gray-400 ml-2 block">台幣 TWD</label>
-                    <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-2xl font-bold text-blue-600">
+                    <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-2xl font-bold text-blue-600 focus:ring-2 focus:ring-blue-100 outline-none">
                 </div>
                 <div class="text-center text-gray-200">⇅</div>
                 <div>
                     <label class="text-xs text-gray-400 ml-2 block">越南盾 VND (萬)</label>
-                    <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none text-2xl font-bold text-green-600">
+                    <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none text-2xl font-bold text-green-600 focus:ring-2 focus:ring-green-100 outline-none">
                 </div>
-            </div>
-        </div>
-
-        <div v-if="currentTab === 'weather'">
-            <div class="bg-white rounded-[2.5rem] p-8 card-shadow text-center">
-                <img src="https://openweathermap.org/img/wn/02d@2x.png" class="w-24 h-24 mx-auto">
-                <h2 class="text-5xl font-bold text-gray-800">29°C</h2>
-                <p class="text-blue-500 font-medium mt-2">峴港市 • 多雲轉晴</p>
             </div>
         </div>
 
     </main>
 
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm glass-nav rounded-full px-4 py-3 flex justify-around shadow-2xl z-50 border border-white/10">
-        <button @click="currentTab = 'itinerary'" :class="{ 'tab-active': currentTab === 'itinerary' }" class="flex flex-col items-center text-gray-500 p-2">
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[95%] max-w-sm glass-nav rounded-full px-2 py-3 flex justify-around shadow-2xl z-50 border border-white/10">
+        <button @click="currentTab = 'itinerary'" :class="{ 'tab-active': currentTab === 'itinerary' }" class="flex flex-col items-center text-gray-500 px-3 py-1">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-            <span class="text-[10px] mt-1 font-bold">行程導航</span>
+            <span class="text-[9px] mt-1 font-bold">行程導航</span>
         </button>
-        <button @click="currentTab = 'exchange'" :class="{ 'tab-active': currentTab === 'exchange' }" class="flex flex-col items-center text-gray-500 p-2">
+        <button @click="currentTab = 'wishlist'" :class="{ 'tab-active': currentTab === 'wishlist' }" class="flex flex-col items-center text-gray-500 px-3 py-1">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+            <span class="text-[9px] mt-1 font-bold">願望清單</span>
+        </button>
+        <button @click="currentTab = 'exchange'" :class="{ 'tab-active': currentTab === 'exchange' }" class="flex flex-col items-center text-gray-500 px-3 py-1">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span class="text-[10px] mt-1 font-bold">即時換匯</span>
-        </button>
-        <button @click="currentTab = 'weather'" :class="{ 'tab-active': currentTab === 'weather' }" class="flex flex-col items-center text-gray-500 p-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
-            <span class="text-[10px] mt-1 font-bold">天氣預報</span>
+            <span class="text-[9px] mt-1 font-bold">即時換匯</span>
         </button>
     </nav>
 </div>
 
 <script>
-    const { createApp, ref, reactive } = Vue;
+    const { createApp, ref, reactive, watch } = Vue;
     createApp({
         setup() {
             const currentTab = ref('itinerary');
             
+            // 行程資料
             const itinerary = [
-                { 
-                    day: "Day 1", date: "5/31", 
-                    title: "小港機場 ➔ 峴港 ➔ 會安古鎮夜遊", 
-                    locationDisplay: "高雄小港機場 / Danang Airport / Chợ đêm Hội An",
-                    searchKey: "Nguyễn Hoàng, An Hội, Hội An, Quảng Nam, Vietnam" // 使用您提供的詳細地址
-                },
-                { 
-                    day: "Day 2", date: "6/01", 
-                    title: "迦南島竹桶船體驗", 
-                    locationDisplay: "Cam Thanh Coconut Village",
-                    searchKey: "Cam Thanh Coconut Village"
-                },
-                { 
-                    day: "Day 3", date: "6/02", 
-                    title: "南會安野生動物園 ➔ 韓江遊船", 
-                    locationDisplay: "Vinpearl River Safari / Han River Cruise",
-                    searchKey: "Vinpearl River Safari South Hoi An"
-                },
-                { 
-                    day: "Day 4", date: "6/03", 
-                    title: "巴拿山法國山城 ➔ 佛手橋", 
-                    locationDisplay: "Ba Na Hills Sun World",
-                    searchKey: "Ba Na Hills Sun World"
-                },
-                { 
-                    day: "Day 5", date: "6/04", 
-                    title: "五行山 ➔ 峴港粉紅教堂 ➔ 賦歸", 
-                    locationDisplay: "Marble Mountains / Da Nang Cathedral / Danang Airport",
-                    searchKey: "Da Nang Cathedral"
-                }
+                { day: "Day 1", date: "5/31", title: "小港機場 ➔ 峴港 ➔ 會安夜遊", locationDisplay: "Kaohsiung Airport / Danang Airport / Nguyễn Hoàng Str.", searchKey: "Nguyễn Hoàng, An Hội, Hội An, Quảng Nam, Vietnam" },
+                { day: "Day 2", date: "6/01", title: "迦南島竹桶船體驗", locationDisplay: "Cam Thanh Coconut Village", searchKey: "Cam Thanh Coconut Village" },
+                { day: "Day 3", date: "6/02", title: "南會安野生動物園 ➔ 韓江遊船", locationDisplay: "Vinpearl River Safari / Han River", searchKey: "Vinpearl River Safari South Hoi An" },
+                { day: "Day 4", date: "6/03", title: "巴拿山法國山城 ➔ 佛手橋", locationDisplay: "Ba Na Hills Sun World", searchKey: "Ba Na Hills Sun World" },
+                { day: "Day 5", date: "6/04", title: "五行山 ➔ 峴港粉紅教堂 ➔ 賦歸", locationDisplay: "Da Nang Cathedral / Danang Airport", searchKey: "Da Nang Cathedral" }
             ];
-            
-            const openMap = (query) => {
-                const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
-                window.open(url, '_blank');
-            };
 
+            // 願望清單邏輯 (LocalStorage 持久化存儲)
+            const wishes = ref(JSON.parse(localStorage.getItem('trip-wishes') || '[]'));
+            const newWish = ref('');
+            
+            const addWish = () => {
+                if (newWish.value.trim()) {
+                    wishes.value.push({ text: newWish.value, done: false });
+                    newWish.value = '';
+                }
+            };
+            const toggleWish = (index) => { wishes.value[index].done = !wishes.value[index].done; };
+            const removeWish = (index) => { wishes.value.splice(index, 1); };
+
+            watch(wishes, (val) => {
+                localStorage.setItem('trip-wishes', JSON.stringify(val));
+            }, { deep: true });
+
+            // 換匯邏輯
             const rates = reactive({ twd: 100, vnd: 7.7 });
             const convert = (type) => {
                 if (type === 'twd') rates.vnd = Number((rates.twd * 0.077).toFixed(2));
                 else rates.twd = Number((rates.vnd / 0.077).toFixed(0));
             };
 
-            return { currentTab, itinerary, rates, convert, openMap };
+            const openMap = (query) => {
+                window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`, '_blank');
+            };
+
+            return { currentTab, itinerary, wishes, newWish, addWish, toggleWish, removeWish, rates, convert, openMap };
         }
     }).mount('#app');
 </script>
