@@ -9,7 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; padding-bottom: 100px; }
-        .header-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%); }
+        /* 網頁上方 Header 的背景顏色已更改為您指定的淺藍色 (#b0d1f9) */
+        .header-bg { background-color: #b0d1f9; }
         .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-top: 1px solid rgba(0,0,0,0.05); }
         .tab-active { color: #2563eb; font-weight: 800; border-bottom: 3px solid #2563eb; }
         [v-cloak] { display: none; }
@@ -17,28 +18,31 @@
         .time-tag { background: #eff6ff; color: #1e40af; padding: 2px 10px; border-radius: 8px; font-weight: bold; font-size: 11px; margin-right: 8px; flex-shrink: 0; }
         .live-clock { font-family: 'Monaco', monospace; }
         .lang-card { border-left: 4px solid #3b82f6; background: #f8fafc; padding: 12px; border-radius: 12px; margin-bottom: 8px; }
-        .notice-badge { background: #fee2e2; color: #991b1b; font-size: 10px; font-weight: bold; padding: 2px 8px; border-radius: 4px; }
+        /* 調整 Header 文字顏色，在淺藍色背景下更清晰 */
+        .header-text-fix { color: #0f172a; }
+        .header-text-fix .opacity-90 { color: #334155; }
+        .header-text-fix .text-blue-200 { color: #1e40af; }
     </style>
 </head>
 <body>
 
 <div id="app" v-cloak>
-    <header class="header-gradient pt-12 pb-24 px-6 text-white rounded-b-[3.5rem] shadow-2xl relative">
+    <header class="header-bg pt-12 pb-24 px-6 rounded-b-[3.5rem] shadow-2xl relative header-text-fix">
         <div class="flex justify-between items-start">
             <div class="flex-1">
                 <div class="flex items-center gap-2 mb-2">
                     <span class="bg-yellow-400 text-blue-900 text-[10px] font-black px-2 py-0.5 rounded">FLAGSHIP ADMIN</span>
                     <h1 class="text-2xl font-bold tracking-tight">峴港五日夏季遊</h1>
                 </div>
-                <div class="space-y-1 opacity-90 text-[11px] bg-black/20 p-3 rounded-2xl border border-white/10 inline-block">
+                <div class="space-y-1 opacity-90 text-[11px] bg-white/40 p-3 rounded-2xl border border-blue-100 inline-block">
                     <p>✈️ 5/31 KHH ➔ DAD | 15:25</p>
                     <p>✈️ 6/04 DAD ➔ KHH | 17:50</p>
                 </div>
             </div>
-            <div class="bg-white/10 p-4 rounded-[2.5rem] border border-white/20 text-right backdrop-blur-xl">
+            <div class="bg-white/50 p-4 rounded-[2.5rem] border border-blue-100 text-right backdrop-blur-xl">
                 <p class="text-[9px] uppercase font-black text-blue-200">峴港時間</p>
                 <p class="text-xl font-bold leading-none mt-1 live-clock">{{ vnTime }}</p>
-                <div class="pt-2 mt-2 border-t border-white/10 text-sm font-bold flex items-center justify-end gap-1">29°C ☀️</div>
+                <div class="pt-2 mt-2 border-t border-blue-100 text-sm font-bold flex items-center justify-end gap-1">29°C ☀️</div>
             </div>
         </div>
     </header>
@@ -171,7 +175,7 @@
                     </div>
                     <div class="lang-card border-l-green-400">
                         <p class="text-[11px] font-bold opacity-60">便宜一點啦</p>
-                        <p class="text-sm">Bớt đi <span class="text-green-600 font-bold ml-2">「撥滴」</span></p>
+                        <p class="text-sm">Bớt đi <span class="text-green-600 font-bold ml-2">("Bớt滴")</span></p>
                     </div>
                     <div class="lang-card border-l-red-400">
                         <p class="text-[11px] font-bold opacity-60">不要辣 (超重要！)</p>
