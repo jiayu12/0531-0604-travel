@@ -43,13 +43,13 @@
                         <span class="text-[10px] text-gray-400 font-medium">{{ item.date }}</span>
                     </div>
                     <h3 class="font-bold text-gray-800 mt-2 leading-snug">{{ item.title }}</h3>
-                    <p class="text-[11px] text-gray-400 mt-1 flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                        {{ item.locationName }}
+                    <p class="text-[10px] text-gray-400 mt-1 flex items-start gap-1">
+                        <svg class="w-3 h-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                        <span>{{ item.locationDisplay }}</span>
                     </p>
                 </div>
                 
-                <button @click="openMap(item.locationName)" 
+                <button @click="openMap(item.searchKey)" 
                         class="nav-btn bg-green-500 hover:bg-green-600 text-white p-4 rounded-2xl shadow-lg shadow-green-100 flex-shrink-0">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
@@ -58,29 +58,26 @@
             </div>
         </div>
 
-        <div v-if="currentTab === 'exchange'" class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50 animate-up">
-            <h3 class="font-bold text-xl mb-6 flex items-center gap-2 text-gray-800">💰 匯率換算</h3>
+        <div v-if="currentTab === 'exchange'" class="bg-white rounded-[2.5rem] p-8 card-shadow">
+            <h3 class="font-bold text-xl mb-6 text-gray-800">💰 匯率換算</h3>
             <div class="space-y-5">
                 <div>
                     <label class="text-xs text-gray-400 ml-2 block">台幣 TWD</label>
-                    <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-2xl font-bold text-blue-600 focus:ring-2 focus:ring-blue-100">
+                    <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-2xl font-bold text-blue-600">
                 </div>
                 <div class="text-center text-gray-200">⇅</div>
                 <div>
                     <label class="text-xs text-gray-400 ml-2 block">越南盾 VND (萬)</label>
-                    <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none text-2xl font-bold text-green-600 focus:ring-2 focus:ring-green-100">
+                    <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none text-2xl font-bold text-green-600">
                 </div>
             </div>
         </div>
 
-        <div v-if="currentTab === 'weather'" class="animate-up">
+        <div v-if="currentTab === 'weather'">
             <div class="bg-white rounded-[2.5rem] p-8 card-shadow text-center">
                 <img src="https://openweathermap.org/img/wn/02d@2x.png" class="w-24 h-24 mx-auto">
                 <h2 class="text-5xl font-bold text-gray-800">29°C</h2>
                 <p class="text-blue-500 font-medium mt-2">峴港市 • 多雲轉晴</p>
-                <div class="mt-8 pt-6 border-t border-gray-100 text-xs text-gray-400 leading-relaxed">
-                    預計 6 月氣候：<br>平均高溫 34°C，請做好防曬。
-                </div>
             </div>
         </div>
 
@@ -108,16 +105,40 @@
         setup() {
             const currentTab = ref('itinerary');
             
-            // 行程資料：優化地點名稱以提升 Google Maps 搜尋精準度
+            // 已更新詳細地址與關鍵字
             const itinerary = [
-                { day: "Day 1", date: "5/31", title: "高雄 ➔ 峴港 ➔ 會安古鎮漫遊", locationName: "Hoi An Ancient Town" },
-                { day: "Day 2", date: "6/01", title: "迦南島竹桶船體驗", locationName: "Cam Thanh Coconut Village" },
-                { day: "Day 3", date: "6/02", title: "南會安野生動物園 ➔ 韓江遊船", locationName: "Vinpearl River Safari South Hoi An" },
-                { day: "Day 4", date: "6/03", title: "巴拿山法國山城 ➔ 佛手橋", locationName: "Ba Na Hills Sun World" },
-                { day: "Day 5", date: "6/04", title: "五行山 ➔ 粉紅教堂 ➔ 賦歸", locationName: "Da Nang Cathedral" }
+                { 
+                    day: "Day 1", date: "5/31", 
+                    title: "小港機場 ➔ 峴港 ➔ 會安古鎮夜遊", 
+                    locationDisplay: "高雄小港機場 / Danang International Airport / Hoi An (Le Loi & Tran Phu Str.)",
+                    searchKey: "Tran Phu Hoi An" // 跳轉地圖時搜尋核心街道
+                },
+                { 
+                    day: "Day 2", date: "6/01", 
+                    title: "迦南島竹桶船體驗", 
+                    locationDisplay: "Cam Thanh Coconut Village",
+                    searchKey: "Cam Thanh Coconut Village"
+                },
+                { 
+                    day: "Day 3", date: "6/02", 
+                    title: "南會安野生動物園 ➔ 韓江遊船", 
+                    locationDisplay: "Vinpearl River Safari South Hoi An / Han River Cruise",
+                    searchKey: "Vinpearl River Safari South Hoi An"
+                },
+                { 
+                    day: "Day 4", date: "6/03", 
+                    title: "巴拿山法國山城 ➔ 佛手橋", 
+                    locationDisplay: "Ba Na Hills Sun World",
+                    searchKey: "Ba Na Hills Sun World"
+                },
+                { 
+                    day: "Day 5", date: "6/04", 
+                    title: "五行山 ➔ 峴港粉紅教堂 ➔ 賦歸", 
+                    locationDisplay: "Marble Mountains / Da Nang Cathedral / Danang International Airport",
+                    searchKey: "Da Nang Cathedral"
+                }
             ];
             
-            // 地圖跳轉邏輯
             const openMap = (query) => {
                 const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
                 window.open(url, '_blank');
