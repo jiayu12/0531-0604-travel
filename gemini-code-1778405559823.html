@@ -8,85 +8,158 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F0F4F7; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F4F7F9; }
         .banner-container { width: 100%; height: 250px; overflow: hidden; position: relative; }
         .banner-image { width: 100%; height: 100%; object-fit: cover; object-position: center; }
-        .tab-active { color: #0056b3; background-color: #FFFDE7; border-radius: 12px; }
+        .glass-nav { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); }
+        .tab-active { color: #FACC15; border-bottom: 2px solid #FACC15; }
+        .animate-up { animation: fadeInUp 0.5s ease-out; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* 隱藏捲軸 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
-        .animate-fade-in { animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="pb-28">
+<body class="pb-32">
 
 <div id="app">
     <div class="banner-container shadow-lg">
-        <img src="https://jiayu12.github.io/0531-0604-travel/61c44a75ebc53187-8dcbb7adb7e1ce7-5e4d3.jpg" alt="Da Nang Night" class="banner-image">
-        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-        <div class="absolute bottom-6 left-6 text-white animate-fade-in">
-            <h1 class="text-2xl font-bold tracking-wider">峴港五日遊</h1>
-            <p class="text-sm opacity-90 font-light uppercase tracking-widest">2026.05.31 - 06.04</p>
+        <img src="61c44a75ebc53187-8dcbb7adb7e1ce7-5e4d3.jpg" alt="Da Nang Night" class="banner-image">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+        <div class="absolute bottom-6 left-6 text-white">
+            <h1 class="text-2xl font-bold tracking-tight">峴港五日遊</h1>
+            <p class="text-xs opacity-80 uppercase tracking-widest">2026.05.31 - 06.04</p>
+        </div>
+        <div class="absolute top-4 right-4 bg-white/20 backdrop-blur-md rounded-2xl px-3 py-1 flex items-center text-white border border-white/20">
+            <span class="text-xs font-bold mr-1">峴港 28°C</span>
+            <img src="https://openweathermap.org/img/wn/01d.png" class="w-6 h-6">
         </div>
     </div>
 
-    <main class="px-4 mt-[-15px] relative z-10">
-        <div class="flex bg-white/90 backdrop-blur rounded-2xl p-1.5 shadow-md mb-6 sticky top-4 z-20">
-            <button v-for="tab in tabs" :key="tab.id" @click="currentTab = tab.id"
-                    :class="['flex-1 py-3 text-sm font-bold transition-all', currentTab === tab.id ? 'tab-active' : 'text-gray-400']">
-                {{ tab.name }}
-            </button>
-        </div>
-
-        <div v-if="currentTab === 'itinerary'" class="space-y-4 animate-fade-in">
-            <div v-for="(item, index) in itinerary" :key="index" class="bg-white rounded-3xl p-5 shadow-sm border-b-4 border-green-400">
-                <div class="flex justify-between items-start gap-3">
-                    <div class="flex-1">
+    <main class="px-5 mt-[-20px] relative z-10">
+        
+        <section v-if="currentTab === 'itinerary'" class="space-y-4 animate-up">
+            <div v-for="(item, index) in itinerary" :key="index" class="bg-white rounded-3xl p-5 shadow-sm border-l-8 border-blue-400">
+                <div class="flex justify-between items-start">
+                    <div>
                         <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-black text-white bg-blue-500 px-2.5 py-1 rounded-full uppercase">{{ item.day }}</span>
-                            <span class="text-xs text-gray-400 font-medium">{{ item.date }}</span>
+                            <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ item.day }}</span>
+                            <span class="text-xs text-gray-400">{{ item.date }}</span>
                         </div>
-                        <h3 class="font-bold text-lg text-gray-800 mt-2.5">{{ item.title }}</h3>
-                        <p class="text-xs text-gray-500 mt-1.5 flex items-center gap-1.5">📍 {{ item.location }}</p>
+                        <h3 class="font-bold text-gray-800 mt-2">{{ item.title }}</h3>
                     </div>
-                    <a :href="'http://googleusercontent.com/maps.google.com/3' + encodeURIComponent(item.location)" target="_blank"
-                       class="bg-green-500 text-white p-3.5 rounded-2xl shadow-lg active:scale-95 transition-transform">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.location)" target="_blank"
+                       class="bg-green-500 text-white p-3 rounded-2xl shadow-md active:scale-95 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
                     </a>
                 </div>
-                <textarea v-model="item.journal" placeholder="寫下旅遊筆記或是晚餐想吃的餐廳..." 
-                          class="w-full mt-4 p-4 bg-blue-50/50 border-none rounded-2xl text-sm text-gray-600 focus:ring-2 focus:ring-blue-100 h-28 resize-none"></textarea>
+                <textarea v-model="item.note" placeholder="筆記紀錄..." class="w-full mt-3 p-3 bg-gray-50 border-none rounded-xl text-sm h-20 resize-none"></textarea>
             </div>
-        </div>
+        </section>
 
-        <div v-if="currentTab === 'budget'"> </div>
-        <div v-if="currentTab === 'wishlist'"> </div>
+        <section v-if="currentTab === 'exchange'" class="animate-up">
+            <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-blue-50">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-3 bg-yellow-100 rounded-2xl text-yellow-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-800">匯率換算 (參考值)</h2>
+                </div>
+                
+                <div class="space-y-5">
+                    <div>
+                        <label class="text-xs text-gray-400 ml-2">台幣 TWD</label>
+                        <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-lg font-bold text-blue-600">
+                    </div>
+                    <div class="flex justify-center py-2">
+                        <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 ml-2">越南盾 VND (萬)</label>
+                        <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none text-lg font-bold text-green-600">
+                    </div>
+                    <p class="text-[10px] text-gray-400 text-center mt-4">匯率：1 TWD ≈ 770 VND (僅供參考)</p>
+                </div>
+            </div>
+        </section>
+
+        <section v-if="currentTab === 'info'" class="space-y-4 animate-up">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-400 rounded-[2rem] p-6 text-white shadow-lg">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-blue-100">峴港市, 越南</p>
+                        <h3 class="text-3xl font-bold">28° ~ 33°C</h3>
+                        <p class="text-xs mt-1">午後可能有陣雨，記得帶傘 🌦️</p>
+                    </div>
+                    <img src="https://openweathermap.org/img/wn/02d@2x.png" class="w-20">
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-[2rem] p-6 shadow-sm">
+                <h3 class="font-bold text-gray-800 mb-4">願望清單</h3>
+                <div class="flex gap-2 mb-4">
+                    <input v-model="newWish" type="text" placeholder="想買什麼呢？" class="flex-1 p-3 bg-gray-50 rounded-xl border-none text-sm">
+                    <button @click="addWish" class="bg-blue-600 text-white px-4 rounded-xl text-sm">＋</button>
+                </div>
+                <div v-for="(w, i) in wishes" :key="i" class="flex items-center gap-3 py-2 border-b border-gray-50 last:border-0">
+                    <input type="checkbox" class="rounded-full text-blue-500">
+                    <span class="text-sm text-gray-600 flex-1">{{ w }}</span>
+                </div>
+            </div>
+        </section>
 
     </main>
 
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-gray-900/90 backdrop-blur-xl rounded-full flex justify-around py-4 shadow-2xl z-50 border border-gray-700/50">
-        </nav>
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md glass-nav rounded-full px-6 py-3 shadow-2xl z-50 flex justify-between items-center">
+        <button @click="currentTab = 'itinerary'" :class="currentTab === 'itinerary' ? 'tab-active' : 'text-gray-400'" class="flex flex-col items-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+            <span class="text-[10px] mt-1 font-bold">行程</span>
+        </button>
+        <button @click="currentTab = 'exchange'" :class="currentTab === 'exchange' ? 'tab-active' : 'text-gray-400'" class="flex flex-col items-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="text-[10px] mt-1 font-bold">換匯</span>
+        </button>
+        <button @click="currentTab = 'info'" :class="currentTab === 'info' ? 'tab-active' : 'text-gray-400'" class="flex flex-col items-center">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+            <span class="text-[10px] mt-1 font-bold">天氣</span>
+        </button>
+    </nav>
 </div>
 
 <script>
-    const { createApp, ref, computed, watchEffect } = Vue;
+    const { createApp, ref, reactive, watchEffect } = Vue;
+
     createApp({
         setup() {
             const currentTab = ref('itinerary');
-            const tabs = [{ id: 'itinerary', name: '行程導航' }, { id: 'budget', name: '旅費記帳' }, { id: 'wishlist', name: '願望清單' }];
-
-            // 資料初始化 (對齊 PDF 行程)
-            const itinerary = ref(JSON.parse(localStorage.getItem('travel_data')) || [
-                { day: "Day 1", date: "5/31", title: "高雄 ➔ 峴港 ➔ 會安古鎮漫遊", location: "Hoi An Ancient Town", journal: "" },
-                { day: "Day 2", date: "6/01", title: "迦南島竹桶船 ➔ 樂釣螃蟹", location: "Cam Thanh Coconut Village", journal: "" },
-                { day: "Day 3", date: "6/02", title: "南會安野生動物園 ➔ 韓江遊船", location: "Vinpearl River Safari South Hoi An", journal: "" },
-                { day: "Day 4", date: "6/03", title: "巴拿山法國山城 ➔ 佛手橋", location: "Golden Bridge Ba Na Hills", journal: "" },
-                { day: "Day 5", date: "6/04", title: "五行山 ➔ 粉紅教堂 ➔ 賦歸", location: "Da Nang Cathedral", journal: "" }
+            
+            // 行程資料 (根據 PDF 優化)
+            const itinerary = ref(JSON.parse(localStorage.getItem('da_nang_itin')) || [
+                { day: "Day 1", date: "5/31", title: "高雄 ➔ 峴港 ➔ 會安古鎮漫遊", location: "Hoi An Ancient Town", note: "" },
+                { day: "Day 2", date: "6/01", title: "迦南島竹桶船 ➔ 樂釣螃蟹", location: "Cam Thanh Coconut Village", note: "" },
+                { day: "Day 3", date: "6/02", title: "南會安野生動物園 ➔ 韓江遊船", location: "Vinpearl River Safari South Hoi An", note: "" },
+                { day: "Day 4", date: "6/03", title: "巴拿山法國山城 ➔ 佛手橋", location: "Golden Bridge Ba Na Hills", note: "" },
+                { day: "Day 5", date: "6/04", title: "五行山 ➔ 粉紅教堂 ➔ 賦歸", location: "Da Nang Cathedral", note: "" }
             ]);
 
-            // 自動存檔
-            watchEffect(() => { localStorage.setItem('travel_data', JSON.stringify(itinerary.value)); });
+            // 換匯計算邏輯
+            const rates = reactive({ twd: 100, vnd: 7.7 });
+            const convert = (source) => {
+                if (source === 'twd') {
+                    rates.vnd = parseFloat((rates.twd * 0.077).toFixed(2)); // 這裡的 vnd 單位設定為「萬」以便於手機閱讀
+                } else {
+                    rates.twd = parseFloat((rates.vnd / 0.077).toFixed(0));
+                }
+            };
 
-            return { currentTab, tabs, itinerary };
+            // 願望清單
+            const wishes = ref(["腰果", "G7 咖啡", "芒果乾", "越南星巴克杯"]);
+            const newWish = ref('');
+            const addWish = () => { if(newWish.value) { wishes.value.push(newWish.value); newWish.value = ''; } };
+
+            // 自動存檔
+            watchEffect(() => { localStorage.setItem('da_nang_itin', JSON.stringify(itinerary.value)); });
+
+            return { currentTab, itinerary, rates, convert, wishes, newWish, addWish };
         }
     }).mount('#app');
 </script>
