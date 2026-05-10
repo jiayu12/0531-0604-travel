@@ -44,7 +44,9 @@
                     </div>
                     <h3 class="font-bold text-gray-800 mt-2 leading-snug">{{ item.title }}</h3>
                     <p class="text-[10px] text-gray-400 mt-1 flex items-start gap-1">
-                        <svg class="w-3 h-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                        <svg class="w-3 h-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        </svg>
                         <span>{{ item.locationDisplay }}</span>
                     </p>
                 </div>
@@ -105,13 +107,12 @@
         setup() {
             const currentTab = ref('itinerary');
             
-            // 已更新詳細地址與關鍵字
             const itinerary = [
                 { 
                     day: "Day 1", date: "5/31", 
                     title: "小港機場 ➔ 峴港 ➔ 會安古鎮夜遊", 
-                    locationDisplay: "高雄小港機場 / Danang International Airport / Hoi An (Le Loi & Tran Phu Str.)",
-                    searchKey: "Tran Phu Hoi An" // 跳轉地圖時搜尋核心街道
+                    locationDisplay: "高雄小港機場 / Danang Airport / Nguyễn Hoàng, Hội An",
+                    searchKey: "Nguyễn Hoàng, An Hội, Hội An, Quảng Nam, Vietnam" // 使用您提供的詳細地址
                 },
                 { 
                     day: "Day 2", date: "6/01", 
@@ -122,7 +123,7 @@
                 { 
                     day: "Day 3", date: "6/02", 
                     title: "南會安野生動物園 ➔ 韓江遊船", 
-                    locationDisplay: "Vinpearl River Safari South Hoi An / Han River Cruise",
+                    locationDisplay: "Vinpearl River Safari / Han River Cruise",
                     searchKey: "Vinpearl River Safari South Hoi An"
                 },
                 { 
@@ -134,7 +135,7 @@
                 { 
                     day: "Day 5", date: "6/04", 
                     title: "五行山 ➔ 峴港粉紅教堂 ➔ 賦歸", 
-                    locationDisplay: "Marble Mountains / Da Nang Cathedral / Danang International Airport",
+                    locationDisplay: "Marble Mountains / Da Nang Cathedral / Danang Airport",
                     searchKey: "Da Nang Cathedral"
                 }
             ];
