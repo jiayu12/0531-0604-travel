@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>峴港旅遊助手 | 2026 旗艦增強版</title>
+    <title>峴港旅遊助手 | 2026 專業導遊旗艦版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; }
-        .header-gradient { background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%); }
+        .header-gradient { background: linear-gradient(135deg, #0f172a 0%, #2563eb 100%); }
         .glass-nav { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border-top: 1px solid rgba(0,0,0,0.05); }
         .tab-active { color: #2563eb; font-weight: 800; border-bottom: 3px solid #2563eb; }
         [v-cloak] { display: none; }
@@ -18,117 +18,130 @@
         .expand-enter-from, .expand-leave-to { max-height: 0; opacity: 0; }
         .time-tag { background: #eff6ff; color: #1e40af; padding: 2px 10px; border-radius: 8px; font-weight: bold; font-size: 11px; margin-right: 8px; flex-shrink: 0; }
         .live-clock { font-family: 'Monaco', monospace; }
-        .status-pill { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 1rem; padding: 0.75rem; }
+        .notice-card { border-left: 4px solid #ef4444; }
     </style>
 </head>
 <body class="pb-36">
 
 <div id="app" v-cloak>
-    <header class="header-gradient pt-10 pb-20 px-6 text-white rounded-b-[3.5rem] shadow-2xl relative">
-        <div class="flex justify-between items-start mb-6">
-            <div>
-                <div class="flex items-center gap-2 mb-1">
-                    <span class="bg-yellow-400 text-blue-900 text-[10px] font-black px-2 py-0.5 rounded">AUTO-SYNC</span>
-                    <h1 class="text-2xl font-bold tracking-tight">峴港五日旅程</h1>
+    <header class="header-gradient pt-12 pb-24 px-6 text-white rounded-b-[3.5rem] shadow-2xl relative">
+        <div class="flex justify-between items-start">
+            <div class="flex-1">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="bg-yellow-400 text-blue-900 text-[10px] font-black px-2 py-0.5 rounded">2026 EDITION</span>
+                    <h1 class="text-2xl font-bold tracking-tight">峴港五日夏季遊</h1>
                 </div>
-                <p class="text-[11px] opacity-70">2026.05.10 更新版本</p>
+                <div class="space-y-1 opacity-90 text-[11px] bg-black/10 p-3 rounded-2xl border border-white/10 inline-block">
+                    <p>✈️ 5/31 KHH ➔ DAD | 15:25 - 16:50</p>
+                    <p>✈️ 6/04 DAD ➔ KHH | 17:50 - 21:15</p>
+                </div>
             </div>
-            <div class="text-right">
-                <p class="text-[10px] uppercase font-black text-blue-200">Local Time</p>
-                <p class="text-xl font-bold live-clock">{{ vnTime }}</p>
-            </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-            <div class="status-pill">
-                <p class="text-[9px] text-blue-200 mb-1">✈️ 航班動態 (DAD)</p>
-                <p class="text-sm font-bold">預計 16:50 降落</p>
-                <p class="text-[9px] opacity-60">Status: On Time</p>
-            </div>
-            <div class="status-pill">
-                <p class="text-[9px] text-blue-200 mb-1">🌡️ 峴港氣象預報</p>
-                <p class="text-sm font-bold">29°C 多雲轉晴</p>
-                <p class="text-[9px] opacity-60">降雨機率 20% | 舒適</p>
+            <div class="bg-white/10 p-4 rounded-[2.5rem] border border-white/20 text-right backdrop-blur-xl">
+                <p class="text-[9px] uppercase font-black text-blue-200">峴港時間</p>
+                <p class="text-xl font-bold leading-none mt-1 live-clock">{{ vnTime }}</p>
+                <div class="pt-2 mt-2 border-t border-white/10 text-sm font-bold flex items-center justify-end gap-1">29°C ☀️</div>
             </div>
         </div>
     </header>
 
-    <main class="px-5 mt-[-30px] relative z-10 space-y-6">
-        <div v-if="currentTab === 'guide'" class="space-y-6">
-            <div class="bg-white rounded-[2.5rem] p-6 card-shadow border-2 border-green-100">
-                <h3 class="font-black text-lg text-green-700 mb-4 flex items-center gap-2">
-                    <span>✨ 隨行備忘錄</span>
-                </h3>
-                <div class="space-y-2 mb-4">
-                    <div class="flex gap-2">
-                        <input v-model="newCustom.time" type="text" placeholder="時間" class="w-1/3 bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs outline-none">
-                        <input v-model="newCustom.event" type="text" placeholder="活動項目..." class="flex-1 bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs outline-none">
-                    </div>
-                    <div class="flex gap-2">
-                        <input v-model="newCustom.note" type="text" placeholder="補充備註" class="flex-1 bg-gray-50 border border-gray-100 rounded-xl p-3 text-xs outline-none">
-                        <button @click="addCustomPlan" class="bg-green-600 text-white px-6 rounded-xl font-black shadow-md">＋</button>
-                    </div>
-                </div>
-                </div>
-
+    <main class="px-5 mt-[-50px] relative z-10">
+        <div v-if="currentTab === 'guide'" class="space-y-4">
             <div v-for="(item, i) in itinerary" :key="i" class="bg-white rounded-[2.5rem] card-shadow overflow-hidden border border-gray-50">
-                <div @click="toggleDay(i)" class="p-6 flex items-center justify-between cursor-pointer">
+                <div @click="toggleDay(i)" class="p-6 flex items-center justify-between cursor-pointer active:bg-gray-50">
                     <div class="flex-1">
                         <span class="text-[10px] font-black text-white bg-blue-600 px-3 py-1 rounded-full uppercase">{{ item.day }}</span>
                         <h3 class="font-bold text-gray-800 mt-2 text-lg">{{ item.title }}</h3>
                     </div>
-                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center" :class="{ 'rotate-180': expandedDay === i }">
+                    <div class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center transition-transform" :class="{ 'rotate-180': expandedDay === i }">
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                 </div>
                 <transition name="expand">
-                    <div v-show="expandedDay === i" class="px-4 pb-8 pt-2 bg-slate-50/50">
-                        <div v-for="(detail, idx) in item.details" :key="idx" @click="detail.loc ? openMap(detail.loc) : null" class="flex items-start p-4 bg-white rounded-[1.5rem] shadow-sm mb-2 border border-gray-100">
-                            <span class="time-tag">{{ detail.time }}</span>
-                            <div class="flex-1">
-                                <p class="text-sm font-bold text-gray-800">{{ detail.event }}</p>
-                                <p v-if="detail.note" class="text-[11px] text-red-500 font-bold mt-1">📢 {{ detail.note }}</p>
+                    <div v-show="expandedDay === i" class="px-4 pb-8 pt-2 bg-slate-50/50 border-t border-gray-100">
+                        <div class="space-y-2">
+                            <div v-for="(detail, idx) in item.details" :key="idx" @click="detail.loc ? openMap(detail.loc) : null" class="flex items-start p-4 bg-white rounded-[1.5rem] shadow-sm active:bg-blue-50 transition border border-gray-100">
+                                <span class="time-tag">{{ detail.time }}</span>
+                                <div class="flex-1">
+                                    <span v-if="detail.isStart" class="inline-block text-[9px] bg-green-500 text-white px-1.5 py-0.5 rounded mr-1 font-bold">飯店啟程</span>
+                                    <p class="text-sm font-bold text-gray-800">{{ detail.event }}</p>
+                                    <p v-if="detail.address" class="text-[9px] text-gray-400 mt-1">{{ detail.address }}</p>
+                                    <p v-if="detail.note" class="text-[11px] text-red-500 font-bold mt-1.5 flex items-center gap-1">📢 {{ detail.note }}</p>
+                                </div>
+                                <div v-if="detail.loc" class="ml-2 text-blue-300">📍</div>
                             </div>
-                            <div v-if="detail.loc" class="ml-2 text-blue-300">📍</div>
                         </div>
                     </div>
                 </transition>
             </div>
         </div>
 
-        <div v-if="currentTab === 'tips'" class="space-y-6">
-            <div class="bg-white rounded-[2.5rem] p-8 card-shadow">
-                <h3 class="font-black text-lg mb-6 flex items-center gap-2">📌 2026 最新注意事項</h3>
-                <div class="space-y-4">
-                    <div class="p-4 bg-red-50 rounded-2xl">
-                        <p class="font-bold text-red-600 text-sm">💡 出入境提示</p>
-                        <p class="text-xs text-red-800 mt-1">請確保持有電子簽證 (E-Visa) 影本。目前峴港機場 (DAD) 入境平均耗時 45 分鐘。</p>
+        <div v-if="currentTab === 'packing'" class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
+            <h3 class="font-black text-xl text-gray-800 mb-6 text-center italic">行李清單</h3>
+            <div class="flex gap-2 mb-8">
+                <input v-model="newPackItem" @keyup.enter="addPackItem" type="text" placeholder="需要帶什麼？" class="flex-1 bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm outline-none">
+                <button @click="addPackItem" class="bg-blue-600 text-white px-6 rounded-2xl font-black shadow-lg">＋</button>
+            </div>
+            <div class="space-y-3">
+                <div v-for="(item, index) in packingList" :key="index" @click="togglePackItem(index)" :class="{ 'opacity-40 bg-gray-50': item.done }" class="p-4 rounded-2xl border border-gray-100 flex items-center justify-between cursor-pointer transition">
+                    <div class="flex items-center gap-4">
+                        <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center" :class="item.done ? 'bg-green-500 border-green-500' : 'border-gray-200'">
+                            <svg v-if="item.done" class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <span class="text-sm font-bold text-gray-700" :class="{ 'line-through': item.done }">{{ item.text }}</span>
                     </div>
-                    <div class="p-4 bg-blue-50 rounded-2xl">
-                        <p class="font-bold text-blue-600 text-sm">📱 通訊與支付</p>
-                        <p class="text-xs text-blue-800 mt-1">Grab 為必備 App。建議在機場先換取少量越盾，大額消費可使用 Apple Pay (部分店家)。</p>
-                    </div>
-                    <div class="p-4 bg-yellow-50 rounded-2xl">
-                        <p class="font-bold text-yellow-600 text-sm">🚗 交通提醒</p>
-                        <p class="text-xs text-yellow-800 mt-1">避免搭乘路邊排班計程車，統一使用 Grab 叫車以避免喊價爭議。</p>
-                    </div>
+                    <button @click.stop="removePackItem(index)" class="text-gray-300 p-2 text-xl">×</button>
                 </div>
             </div>
-            <div class="bg-white rounded-[2.5rem] p-8 card-shadow">
-                <h3 class="font-black text-[11px] mb-6 text-blue-600 tracking-[0.2em] uppercase text-center">💸 越幣快速換算</h3>
+        </div>
+
+        <div v-if="currentTab === 'shop'" class="bg-white rounded-[3rem] p-8 card-shadow border border-gray-50">
+            <h3 class="font-black text-xl mb-6 text-gray-800 text-center italic">願望清單</h3>
+            <div class="space-y-4 mb-10">
+                <input v-model="newWish" type="text" placeholder="品名或品牌..." class="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-sm outline-none">
+                <div class="flex gap-2">
+                    <label class="flex-1 flex items-center justify-center gap-2 bg-slate-100 text-slate-600 py-4 rounded-2xl text-xs font-bold cursor-pointer">
+                        📸 附加圖片 <input type="file" accept="image/*" class="hidden" @change="handleFileUpload">
+                    </label>
+                    <button @click="addWish" class="bg-blue-600 text-white px-8 rounded-2xl font-black">新增項目</button>
+                </div>
+                <div v-if="previewImage" class="relative w-24 h-24 mx-auto mt-2"><img :src="previewImage" class="w-full h-full object-cover rounded-2xl border-4 border-white shadow-md"></div>
+            </div>
+            <div class="grid grid-cols-1 gap-4">
+                <div v-for="(wish, index) in wishes" :key="index" @click="toggleWish(index)" :class="{ 'opacity-40': wish.done }" class="p-4 bg-gray-50 rounded-[2rem] border border-gray-100 flex items-center gap-4 relative">
+                    <img v-if="wish.image" :src="wish.image" class="w-16 h-16 object-cover rounded-xl shadow-sm">
+                    <div v-else class="w-16 h-16 bg-gray-200 rounded-xl flex items-center justify-center text-gray-400 text-[10px]">無圖片</div>
+                    <div class="flex-1"><p class="text-sm font-bold text-gray-700">{{ wish.text }}</p></div>
+                    <button @click.stop="removeWish(index)" class="absolute top-4 right-4 text-gray-300">×</button>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="currentTab === 'tips'" class="space-y-6">
+            <div class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
+                <h3 class="font-black text-[11px] mb-6 text-blue-600 tracking-[0.2em] uppercase text-center">💸 2026 匯率快速換算</h3>
                 <div class="flex items-center gap-4">
                     <div class="flex-1"><label class="text-[10px] font-bold text-gray-400 ml-2">台幣 TWD</label><input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none font-bold text-blue-600 text-xl"></div>
                     <div class="flex-1"><label class="text-[10px] font-bold text-gray-400 ml-2">越盾 VND (萬)</label><input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none font-bold text-green-600 text-xl"></div>
                 </div>
+                <p class="text-[9px] text-gray-400 mt-4 text-center">註：估算基準為 1 TWD ≈ 770 VND (7.7萬)</p>
+            </div>
+            <div class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
+                <h3 class="font-black text-[11px] text-red-500 tracking-[0.2em] mb-6 text-center italic">🚩 導遊必看叮嚀</h3>
+                <div class="space-y-4">
+                    <div class="notice-card bg-red-50/50 p-4 rounded-xl"><p class="text-xs font-bold text-red-800 mb-1">💸 小費建議</p><p class="text-[11px] text-gray-600">按摩：5萬-10萬VND。床頭：2萬VND。切記不給硬幣。</p></div>
+                    <div class="notice-card bg-orange-50/50 p-4 rounded-xl border-l-orange-500"><p class="text-xs font-bold text-orange-800 mb-1">👗 寺廟教堂禁忌</p><p class="text-[11px] text-gray-600">嚴禁無袖、短裙。參觀粉紅教堂與靈應寺時建議帶件薄外套遮擋。</p></div>
+                    <div class="notice-card bg-blue-50/50 p-4 rounded-xl border-l-blue-500"><p class="text-xs font-bold text-blue-800 mb-1">🚗 交通建議</p><p class="text-[11px] text-gray-600">一律使用 Grab App，綁定信用卡可避免找零產生的匯率糾紛。</p></div>
+                </div>
             </div>
         </div>
-        
-        </main>
+    </main>
 
     <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[94%] glass-nav rounded-[2.5rem] px-2 py-4 flex justify-around shadow-2xl z-50">
-        <button @click="currentTab = 'guide'" :class="{ 'tab-active': currentTab === 'guide' }" class="flex flex-col items-center text-gray-400 px-3"><span class="text-xl">🗺️</span><span class="text-[10px] mt-1 font-bold">行程</span></button>
-        <button @click="currentTab = 'tips'" :class="{ 'tab-active': currentTab === 'tips' }" class="flex flex-col items-center text-gray-400 px-3"><span class="text-xl">💡</span><span class="text-[10px] mt-1 font-bold">須知</span></button>
-        </nav>
+        <button @click="currentTab = 'guide'" :class="{ 'tab-active': currentTab === 'guide' }" class="flex flex-col items-center text-gray-400 px-3"><span class="text-xl">🗺️</span><span class="text-[10px] mt-1 font-bold">每日行程</span></button>
+        <button @click="currentTab = 'packing'" :class="{ 'tab-active': currentTab === 'packing' }" class="flex flex-col items-center text-gray-400 px-3"><span class="text-xl">🎒</span><span class="text-[10px] mt-1 font-bold">行李檢查</span></button>
+        <button @click="currentTab = 'shop'" :class="{ 'tab-active': currentTab === 'shop' }" class="flex flex-col items-center text-gray-400 px-3"><span class="text-xl">🛍️</span><span class="text-[10px] mt-1 font-bold">購物願望</span></button>
+        <button @click="currentTab = 'tips'" :class="{ 'tab-active': currentTab === 'tips' }" class="flex flex-col items-center text-gray-400 px-3"><span class="text-xl">💡</span><span class="text-[10px] mt-1 font-bold">旅遊須知</span></button>
+    </nav>
 </div>
 
 <script>
@@ -139,52 +152,89 @@
             const expandedDay = ref(0);
             const vnTime = ref('--:--:--');
             
-            const customPlans = ref(JSON.parse(localStorage.getItem('vn_custom_plans_v1') || '[]'));
-            const newCustom = reactive({ time: '', event: '', note: '' });
+            // 本地存儲初始化
+            const getStorage = (k) => JSON.parse(localStorage.getItem(k) || '[]');
+            const packingList = ref(getStorage('vn_pack_2026'));
+            const wishes = ref(getStorage('vn_wishes_2026'));
+            const newPackItem = ref(''); 
+            const newWish = ref(''); 
+            const previewImage = ref(null);
 
+            // 匯率
+            const rates = reactive({ twd: 100, vnd: 7.7 });
+            const convert = (t) => {
+                if(t === 'twd') rates.vnd = Number((rates.twd * 0.077).toFixed(2));
+                else rates.twd = Number((rates.vnd / 0.077).toFixed(0));
+            };
+
+            // 行程數據
             const itinerary = [
                 { day: "Day 1", title: "啟程 ➔ 會安古鎮", details: [
-                    { time: "16:50", event: "抵達峴港 (DAD) ✈️", loc: "Da Nang International Airport", note: "記得先至行李轉盤旁的櫃檯購買 SIM 卡" },
-                    { time: "18:30", event: "飯店 Check-in", note: "入住後建議直接 Grab 前往會安" },
+                    { time: "13:30", event: "高雄小港機場報到", loc: "Kaohsiung International Airport" },
+                    { time: "16:50", event: "抵達峴港 (DAD)", loc: "Da Nang International Airport" },
                     { time: "20:00", event: "夜遊會安夜市", loc: "Nguyễn Hoàng Night Market" }
                 ]},
                 { day: "Day 2", title: "水椰林 ➔ 古城巡禮", details: [
-                    { time: "09:30", event: "迦南島竹桶船", loc: "Cam Thanh Coconut Village", note: "小費建議給 20,000 VND" },
-                    { time: "14:30", event: "陳富街探訪", loc: "Trần Phú, Hội An" },
-                    { time: "16:00", event: "日本橋 (來遠橋)", loc: "Chùa Cầu" }
+                    { time: "08:30", event: "飯店出發", isStart: true },
+                    { time: "09:30", event: "迦南島竹桶船", loc: "Cam Thanh Coconut Village", note: "小費建議: 2萬VND" },
+                    { time: "14:30", event: "陳富街、日本橋", loc: "Trần Phú, Hội An", note: "必拍地標點" },
+                    { time: "18:00", event: "古城自由探訪", loc: "Hội An Ancient Town" }
                 ]},
-                { day: "Day 3", title: "動物園 ➔ 按摩 ➔ 龍橋", details: [
+                { day: "Day 3", title: "野生動物園 ➔ 按摩 ➔ 韓江", details: [
                     { time: "09:30", event: "南會安野生動物園", loc: "Vinpearl River Safari South Hoi An" },
-                    { time: "17:00", event: "越式按摩體驗", note: "推薦去知名連鎖店，安全有保障" },
-                    { time: "20:00", event: "韓江夜遊：龍橋噴火", loc: "Han River Dragon Bridge", note: "週末 21:00 有噴火表演" }
+                    { time: "17:00", event: "放鬆：越式按摩", note: "建議按摩前一小時勿進食" },
+                    { time: "20:00", event: "韓江夜遊：賞龍橋", loc: "Han River Dragon Bridge" }
                 ]},
-                { day: "Day 4", title: "巴拿山 ➔ 佛手橋", details: [
-                    { time: "10:00", event: "登山小火車 & 佛手橋", loc: "Golden Bridge Ba Na Hills", note: "山上氣溫較低，建議帶薄外套" },
-                    { time: "14:30", event: "室內遊樂園自由活動", loc: "Fantasy Park Ba Na Hills" }
+                { day: "Day 4", title: "巴拿山全日遊 (佛手橋)", details: [
+                    { time: "10:00", event: "巴拿山登山小火車", loc: "Ba Na Hills Funicular" },
+                    { time: "10:30", event: "黃金佛手橋拍照", loc: "Golden Bridge Ba Na Hills" },
+                    { time: "13:00", event: "山城自助午餐", loc: "Ba Na Hills Sun World" },
+                    { time: "14:30", event: "Fantasy Park 自由活動", loc: "Fantasy Park Ba Na Hills" }
                 ]},
-                { day: "Day 5", title: "五行山 ➔ 粉紅教堂", details: [
-                    { time: "09:30", event: "五行山探險", loc: "The Marble Mountains" },
+                { day: "Day 5", title: "五行山 ➔ 教堂 ➔ 返港", details: [
+                    { time: "09:30", event: "五行山探險", loc: "The Marble Mountains", note: "建議穿好走的鞋" },
                     { time: "11:30", event: "峴港粉紅教堂", loc: "Da Nang Cathedral" },
-                    { time: "13:30", event: "WinMart 商城採買", loc: "Vincom Plaza Da Nang", note: "必買：腰果、G7 咖啡" },
-                    { time: "15:30", event: "前往機場", loc: "Da Nang International Airport" }
+                    { time: "13:30", event: "WinMart 超市採買", loc: "Vincom Plaza Da Nang", note: "腰果、咖啡買齊處" },
+                    { time: "15:30", event: "前往峴港機場", loc: "Da Nang International Airport" }
                 ]}
             ];
 
+            // 峴港時間同步
             const updateVNTime = () => {
                 const o = { timeZone:'Asia/Ho_Chi_Minh', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
-                vnTime.value = new Intl.DateTimeFormat('zh-TW',o).format(new Date());
+                vnTime.value = new Intl.DateTimeFormat('zh-TW', o).format(new Date());
             };
 
-            const rates = reactive({ twd: 100, vnd: 7.7 });
-            const convert = (t) => { if(t==='twd') rates.vnd=Number((rates.twd*0.077).toFixed(2)); else rates.twd=Number((rates.vnd/0.077).toFixed(0)); };
+            // 行李檢查邏輯
+            const addPackItem = () => { if(newPackItem.value.trim()){ packingList.value.push({text:newPackItem.value, done:false}); newPackItem.value=''; }};
+            const togglePackItem = (i) => packingList.value[i].done = !packingList.value[i].done;
+            const removePackItem = (i) => packingList.value.splice(i,1);
+
+            // 願望清單邏輯
+            const handleFileUpload = (e) => {
+                const f = e.target.files[0]; if(!f) return;
+                const r = new FileReader(); r.onload = (ev) => previewImage.value = ev.target.result; r.readAsDataURL(f);
+            };
+            const addWish = () => {
+                if(newWish.value.trim() || previewImage.value){
+                    wishes.value.push({ text: newWish.value || '未命名項目', image: previewImage.value, done: false });
+                    newWish.value=''; previewImage.value=null;
+                }
+            };
+            const toggleWish = (i) => wishes.value[i].done = !wishes.value[i].done;
+            const removeWish = (i) => wishes.value.splice(i,1);
+
+            // 監聽並儲存
+            watch(packingList, (v) => localStorage.setItem('vn_pack_2026', JSON.stringify(v)), { deep: true });
+            watch(wishes, (v) => localStorage.setItem('vn_wishes_2026', JSON.stringify(v)), { deep: true });
 
             onMounted(() => { updateVNTime(); setInterval(updateVNTime, 1000); });
-            
-            return { 
-                currentTab, expandedDay, itinerary, customPlans, newCustom, vnTime, rates, convert,
-                addCustomPlan: () => { if(newCustom.event.trim()){ customPlans.value.push({...newCustom}); newCustom.time=''; newCustom.event=''; newCustom.note=''; }},
-                openMap: (q) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`, '_blank'),
-                toggleDay: (i) => expandedDay.value = expandedDay.value === i ? null : i 
+
+            return {
+                currentTab, expandedDay, itinerary, vnTime, packingList, newPackItem, wishes, newWish, previewImage, rates,
+                addPackItem, togglePackItem, removePackItem, handleFileUpload, addWish, toggleWish, removeWish, convert,
+                toggleDay: (i) => expandedDay.value = expandedDay.value === i ? null : i,
+                openMap: (q) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`, '_blank')
             };
         }
     }).mount('#app');
