@@ -14,6 +14,7 @@
         .tab-active { color: #fbbf24; border-bottom: 2px solid #fbbf24; }
         [v-cloak] { display: none; }
         .card-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); }
+        .nav-btn:active { transform: scale(0.9); transition: 0.1s; }
     </style>
 </head>
 <body class="pb-28">
@@ -23,11 +24,11 @@
         <div class="flex justify-between items-center">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">峴港五日遊</h1>
-                <p class="text-xs opacity-70 mt-1 uppercase tracking-widest">2026.05.31 - 06.04</p>
+                <p class="text-xs opacity-70 mt-1 tracking-widest text-blue-100">DA NANG TRAVEL • 2026</p>
             </div>
-            <div class="bg-white/20 backdrop-blur-md rounded-2xl p-2 text-center border border-white/10">
-                <p class="text-[10px] font-bold">峴港</p>
-                <p class="text-sm">29°C</p>
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-2 px-3 border border-white/10">
+                <p class="text-[10px] font-bold opacity-80">峴港即時</p>
+                <p class="text-sm font-bold">29°C 🌤️</p>
             </div>
         </div>
     </header>
@@ -35,87 +36,68 @@
     <main class="px-5 mt-[-30px] relative z-10">
         
         <div v-if="currentTab === 'itinerary'" class="space-y-4">
-            <div v-for="(item, i) in itinerary" :key="i" class="bg-white rounded-3xl p-5 card-shadow border border-gray-50">
-                <div class="flex justify-between items-start">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ item.day }}</span>
-                            <span class="text-[10px] text-gray-400 font-medium">{{ item.date }}</span>
-                        </div>
-                        <h3 class="font-bold text-gray-800 mt-2">{{ item.title }}</h3>
-                        <p class="text-xs text-gray-400 mt-1">📍 {{ item.location }}</p>
+            <div v-for="(item, i) in itinerary" :key="i" class="bg-white rounded-3xl p-5 card-shadow flex items-center justify-between border border-gray-50">
+                <div class="flex-1 pr-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">{{ item.day }}</span>
+                        <span class="text-[10px] text-gray-400 font-medium">{{ item.date }}</span>
                     </div>
-                    <a :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.location)" target="_blank"
-                       class="bg-green-500 text-white p-3 rounded-2xl shadow-md active:scale-90 transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <div v-if="currentTab === 'exchange'" class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50">
-            <h3 class="font-bold text-xl mb-6 flex items-center gap-2 text-gray-800">
-                <span class="p-2 bg-yellow-100 rounded-xl text-yellow-600 text-sm">💰</span> 匯率換算
-            </h3>
-            <div class="space-y-5">
-                <div>
-                    <label class="text-xs text-gray-400 ml-2 mb-1 block">台幣 TWD</label>
-                    <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-2xl font-bold text-blue-600 focus:ring-2 focus:ring-blue-100">
-                </div>
-                <div class="flex justify-center text-gray-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path></svg>
-                </div>
-                <div>
-                    <label class="text-xs text-gray-400 ml-2 mb-1 block">越南盾 VND (萬)</label>
-                    <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none text-2xl font-bold text-green-600 focus:ring-2 focus:ring-green-100">
-                </div>
-                <div class="mt-4 p-4 bg-gray-50 rounded-2xl">
-                    <p class="text-[11px] text-gray-400 text-center leading-relaxed">
-                        目前匯率預設：1 TWD ≈ 770 VND<br>
-                        (輸入 100 台幣，下方會顯示 7.7 萬越南盾)
+                    <h3 class="font-bold text-gray-800 mt-2 leading-snug">{{ item.title }}</h3>
+                    <p class="text-[11px] text-gray-400 mt-1 flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                        {{ item.locationName }}
                     </p>
                 </div>
+                
+                <button @click="openMap(item.locationName)" 
+                        class="nav-btn bg-green-500 hover:bg-green-600 text-white p-4 rounded-2xl shadow-lg shadow-green-100 flex-shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
             </div>
         </div>
 
-        <div v-if="currentTab === 'weather'" class="space-y-4">
-            <div class="bg-white rounded-[2.5rem] p-8 card-shadow text-center">
-                <div class="flex flex-col items-center">
-                    <span class="text-gray-400 text-sm">峴港市, 越南</span>
-                    <img src="https://openweathermap.org/img/wn/02d@2x.png" class="w-24 h-24">
-                    <h2 class="text-5xl font-bold text-gray-800">29°C</h2>
-                    <p class="text-blue-500 font-medium mt-2">多雲轉晴 🌤️</p>
+        <div v-if="currentTab === 'exchange'" class="bg-white rounded-[2.5rem] p-8 card-shadow border border-gray-50 animate-up">
+            <h3 class="font-bold text-xl mb-6 flex items-center gap-2 text-gray-800">💰 匯率換算</h3>
+            <div class="space-y-5">
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 block">台幣 TWD</label>
+                    <input type="number" v-model="rates.twd" @input="convert('twd')" class="w-full p-4 bg-gray-50 rounded-2xl border-none text-2xl font-bold text-blue-600 focus:ring-2 focus:ring-blue-100">
                 </div>
-                <div class="grid grid-cols-2 gap-4 mt-8 pt-6 border-t border-gray-100">
-                    <div>
-                        <p class="text-xs text-gray-400">降雨機率</p>
-                        <p class="font-bold text-gray-700">20%</p>
-                    </div>
-                    <div>
-                        <p class="text-xs text-gray-400">濕度</p>
-                        <p class="font-bold text-gray-700">75%</p>
-                    </div>
+                <div class="text-center text-gray-200">⇅</div>
+                <div>
+                    <label class="text-xs text-gray-400 ml-2 block">越南盾 VND (萬)</label>
+                    <input type="number" v-model="rates.vnd" @input="convert('vnd')" class="w-full p-4 bg-green-50 rounded-2xl border-none text-2xl font-bold text-green-600 focus:ring-2 focus:ring-green-100">
                 </div>
             </div>
-            <div class="bg-blue-50 rounded-2xl p-4 text-blue-700 text-xs leading-relaxed">
-                💡 六月的峴港非常炎熱，建議穿著透氣衣物，並隨時補充水分！
+        </div>
+
+        <div v-if="currentTab === 'weather'" class="animate-up">
+            <div class="bg-white rounded-[2.5rem] p-8 card-shadow text-center">
+                <img src="https://openweathermap.org/img/wn/02d@2x.png" class="w-24 h-24 mx-auto">
+                <h2 class="text-5xl font-bold text-gray-800">29°C</h2>
+                <p class="text-blue-500 font-medium mt-2">峴港市 • 多雲轉晴</p>
+                <div class="mt-8 pt-6 border-t border-gray-100 text-xs text-gray-400 leading-relaxed">
+                    預計 6 月氣候：<br>平均高溫 34°C，請做好防曬。
+                </div>
             </div>
         </div>
 
     </main>
 
-    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-sm:w-[95%] max-w-sm glass-nav rounded-full px-4 py-3 flex justify-around shadow-2xl z-50 border border-white/10">
-        <button @click="currentTab = 'itinerary'" :class="{ 'tab-active': currentTab === 'itinerary' }" class="flex flex-col items-center text-gray-500 p-2 transition-all">
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-sm glass-nav rounded-full px-4 py-3 flex justify-around shadow-2xl z-50 border border-white/10">
+        <button @click="currentTab = 'itinerary'" :class="{ 'tab-active': currentTab === 'itinerary' }" class="flex flex-col items-center text-gray-500 p-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
-            <span class="text-[10px] mt-1 font-bold">行程</span>
+            <span class="text-[10px] mt-1 font-bold">行程導航</span>
         </button>
-        <button @click="currentTab = 'exchange'" :class="{ 'tab-active': currentTab === 'exchange' }" class="flex flex-col items-center text-gray-500 p-2 transition-all">
+        <button @click="currentTab = 'exchange'" :class="{ 'tab-active': currentTab === 'exchange' }" class="flex flex-col items-center text-gray-500 p-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <span class="text-[10px] mt-1 font-bold">換匯</span>
+            <span class="text-[10px] mt-1 font-bold">即時換匯</span>
         </button>
-        <button @click="currentTab = 'weather'" :class="{ 'tab-active': currentTab === 'weather' }" class="flex flex-col items-center text-gray-500 p-2 transition-all">
+        <button @click="currentTab = 'weather'" :class="{ 'tab-active': currentTab === 'weather' }" class="flex flex-col items-center text-gray-500 p-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
-            <span class="text-[10px] mt-1 font-bold">天氣</span>
+            <span class="text-[10px] mt-1 font-bold">天氣預報</span>
         </button>
     </nav>
 </div>
@@ -125,21 +107,29 @@
     createApp({
         setup() {
             const currentTab = ref('itinerary');
+            
+            // 行程資料：優化地點名稱以提升 Google Maps 搜尋精準度
             const itinerary = [
-                { day: "Day 1", date: "5/31", title: "高雄 ➔ 峴港 ➔ 會安古鎮漫遊", location: "Hoi An Ancient Town" },
-                { day: "Day 2", date: "6/01", title: "迦南島竹桶船 ➔ 樂釣螃蟹", location: "Cam Thanh Coconut Village" },
-                { day: "Day 3", date: "6/02", title: "南會安野生動物園 ➔ 韓江遊船", location: "Vinpearl River Safari South Hoi An" },
-                { day: "Day 4", date: "6/03", title: "巴拿山法國山城 ➔ 佛手橋", location: "Golden Bridge Ba Na Hills" },
-                { day: "Day 5", date: "6/04", title: "五行山 ➔ 粉紅教堂 ➔ 賦歸", location: "Da Nang Cathedral" }
+                { day: "Day 1", date: "5/31", title: "高雄 ➔ 峴港 ➔ 會安古鎮漫遊", locationName: "Hoi An Ancient Town" },
+                { day: "Day 2", date: "6/01", title: "迦南島竹桶船體驗", locationName: "Cam Thanh Coconut Village" },
+                { day: "Day 3", date: "6/02", title: "南會安野生動物園 ➔ 韓江遊船", locationName: "Vinpearl River Safari South Hoi An" },
+                { day: "Day 4", date: "6/03", title: "巴拿山法國山城 ➔ 佛手橋", locationName: "Ba Na Hills Sun World" },
+                { day: "Day 5", date: "6/04", title: "五行山 ➔ 粉紅教堂 ➔ 賦歸", locationName: "Da Nang Cathedral" }
             ];
             
+            // 地圖跳轉邏輯
+            const openMap = (query) => {
+                const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+                window.open(url, '_blank');
+            };
+
             const rates = reactive({ twd: 100, vnd: 7.7 });
             const convert = (type) => {
                 if (type === 'twd') rates.vnd = Number((rates.twd * 0.077).toFixed(2));
                 else rates.twd = Number((rates.vnd / 0.077).toFixed(0));
             };
 
-            return { currentTab, itinerary, rates, convert };
+            return { currentTab, itinerary, rates, convert, openMap };
         }
     }).mount('#app');
 </script>
