@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>峴港旅遊助手 | 最終完全體</title>
+    <title>峴港旅遊助手 | 最終完全體 V2</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
@@ -29,7 +29,10 @@
         <div class="flex justify-between items-start mb-6">
             <div>
                 <h1 class="text-2xl font-black tracking-tight">峴港五日夏季遊</h1>
-                <p class="text-[11px] font-bold opacity-70 mt-1">5/31 - 6/04 ✈️ 出發準備中</p>
+                <div class="mt-2 space-y-1">
+                    <p class="text-[10px] font-bold bg-white/40 w-fit px-2 py-0.5 rounded-full">✈️ 5/31 KHH 15:25 ➔ DAD 16:50</p>
+                    <p class="text-[10px] font-bold bg-white/40 w-fit px-2 py-0.5 rounded-full">✈️ 6/04 DAD 17:50 ➔ KHH 19:15</p>
+                </div>
             </div>
             <div class="bg-white/40 p-3 rounded-2xl border border-white/50 text-right backdrop-blur-md">
                 <p class="text-lg font-black leading-none">{{ vnTime }}</p>
@@ -42,8 +45,8 @@
                 <span class="hotel-tag">🏨 飯店資訊</span>
             </div>
             <div class="text-[11px] font-bold space-y-1 text-slate-600">
-                <p class="flex justify-between">5/31-6/02 會安精品飯店 <span @click="openMap('Little Hoi An Boutique Hotel')">📍</span></p>
-                <p class="flex justify-between">6/03 峴港薩拉沙灘飯店 <span @click="openMap('Sala Danang Beach Hotel')">📍</span></p>
+                <p class="flex justify-between">5/31-6/02 會安精品飯店 <span @click="openMap('Little Hoi An Boutique Hotel')" class="cursor-pointer">📍</span></p>
+                <p class="flex justify-between">6/03 峴港薩拉沙灘飯店 <span @click="openMap('Sala Danang Beach Hotel')" class="cursor-pointer">📍</span></p>
             </div>
         </div>
     </header>
@@ -70,20 +73,20 @@
                                 <p v-if="item.addr" class="text-[9px] text-blue-400 font-bold truncate max-w-[120px]">{{ item.addr }}</p>
                             </div>
                             <div class="flex items-center gap-3">
-                                <span v-if="item.addr" @click.stop="openMap(item.addr)" class="text-lg">📍</span>
+                                <span v-if="item.addr" @click.stop="openMap(item.addr)" class="text-lg cursor-pointer">📍</span>
                                 <button @click.stop="editItem(i, idx)" class="text-blue-500 text-sm">✎</button>
                                 <button @click.stop="removeItem(i, idx)" class="text-slate-300">✕</button>
                             </div>
                         </div>
                     </div>
-                    <button @click="addingItem = i" class="w-full py-3 bg-white text-blue-500 rounded-2xl text-[11px] font-black border-2 border-dashed border-blue-100">+ 新增行程</button>
+                    <button @click="addingItem = i" class="w-full py-3 bg-white text-blue-500 rounded-2xl text-[11px] font-black border-2 border-dashed border-blue-100">+ 新增行程項目</button>
                     
                     <div v-if="addingItem === i" class="mt-4 p-4 bg-blue-50 rounded-2xl space-y-2">
-                        <input v-model="newItem.time" placeholder="時間" class="w-full p-2 rounded-lg text-sm font-bold border-none">
-                        <input v-model="newItem.event" placeholder="行程名稱" class="w-full p-2 rounded-lg text-sm font-bold border-none">
-                        <input v-model="newItem.addr" placeholder="地址 (地圖導航)" class="w-full p-2 rounded-lg text-sm font-bold border-none">
+                        <input v-model="newItem.time" placeholder="預計時間 (例如 09:30)" class="w-full p-2 rounded-lg text-sm font-bold border-none outline-none">
+                        <input v-model="newItem.event" placeholder="行程名稱" class="w-full p-2 rounded-lg text-sm font-bold border-none outline-none">
+                        <input v-model="newItem.addr" placeholder="地址 (用於地圖導航)" class="w-full p-2 rounded-lg text-sm font-bold border-none outline-none">
                         <div class="flex gap-2">
-                            <button @click="saveItem(i)" class="flex-1 bg-blue-600 text-white py-2 rounded-xl text-xs font-bold">確認</button>
+                            <button @click="saveItem(i)" class="flex-1 bg-blue-600 text-white py-2 rounded-xl text-xs font-bold">確認新增</button>
                             <button @click="addingItem = null" class="flex-1 bg-slate-200 text-slate-500 py-2 rounded-xl text-xs font-bold">取消</button>
                         </div>
                     </div>
@@ -97,7 +100,7 @@
                 <span class="text-[10px] bg-slate-100 px-2 py-1 rounded-full text-slate-400">已完成 {{ packedCount }}/{{ packingList.length }}</span>
             </h3>
             <div class="flex gap-2 mb-6">
-                <input v-model="newPackItem" class="flex-1 bg-slate-50 p-3 rounded-2xl text-sm font-bold outline-none" placeholder="新增物品...">
+                <input v-model="newPackItem" class="flex-1 bg-slate-50 p-3 rounded-2xl text-sm font-bold outline-none" placeholder="新增需要攜帶的物品...">
                 <button @click="addPackItem" class="bg-blue-600 text-white w-12 rounded-2xl font-black">+</button>
             </div>
             <div class="space-y-3">
@@ -119,22 +122,29 @@
                         <p class="text-xl font-black tracking-tight">${{ totalTWD }}</p>
                     </div>
                     <div class="bg-orange-500 p-4 rounded-[2rem] text-white">
-                        <p class="text-[9px] font-black opacity-80">需還款 (代付)</p>
+                        <p class="text-[9px] font-black opacity-80">需還款總計</p>
                         <p class="text-xl font-black tracking-tight">${{ totalDebtTWD }}</p>
                     </div>
                 </div>
                 
                 <div class="space-y-2 bg-slate-50 p-5 rounded-[2rem]">
-                    <input v-model="newExp.item" placeholder="消費項目" class="w-full bg-white p-3 rounded-xl text-sm font-bold outline-none border-none">
+                    <input v-model="newExp.item" placeholder="消費項目內容" class="w-full bg-white p-3 rounded-xl text-sm font-bold outline-none border-none shadow-sm">
                     <div class="grid grid-cols-2 gap-2">
-                        <input v-model.number="newExp.vnd" @input="convert('VND')" type="number" placeholder="萬 VND" class="bg-white p-3 rounded-xl text-sm font-bold outline-none border-none">
-                        <input v-model.number="newExp.twd" @input="convert('TWD')" type="number" placeholder="台幣 NT" class="bg-white p-3 rounded-xl text-sm font-bold outline-none border-none">
+                        <input v-model.number="newExp.vnd" @input="convert('VND')" type="number" placeholder="萬 VND" class="bg-white p-3 rounded-xl text-sm font-bold outline-none border-none shadow-sm">
+                        <input v-model.number="newExp.twd" @input="convert('TWD')" type="number" placeholder="台幣 NT" class="bg-white p-3 rounded-xl text-sm font-bold outline-none border-none shadow-sm">
                     </div>
-                    <label class="flex items-center gap-2 p-2 cursor-pointer">
-                        <input type="checkbox" v-model="newExp.isDebt" class="w-4 h-4 rounded text-blue-600">
-                        <span class="text-xs font-bold text-orange-600">這是他人代付 (標記為欠款)</span>
-                    </label>
-                    <button @click="saveExp" class="w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-black mt-2">紀錄支出</button>
+                    
+                    <div class="p-3 bg-white rounded-xl shadow-sm border border-slate-100 mt-2">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" v-model="newExp.isDebt" class="w-4 h-4 rounded text-blue-600">
+                            <span class="text-xs font-bold text-orange-600">由他人代付 (標記欠款)</span>
+                        </label>
+                        <div v-if="newExp.isDebt" class="mt-2 pt-2 border-t border-dashed">
+                            <input v-model="newExp.debtor" placeholder="請輸入欠款人/代付人姓名" class="w-full bg-orange-50 p-2 rounded-lg text-xs font-bold outline-none border border-orange-100">
+                        </div>
+                    </div>
+                    
+                    <button @click="saveExp" class="w-full bg-slate-900 text-white py-3 rounded-xl text-sm font-black mt-4 shadow-lg active:scale-95 transition">紀錄此筆支出</button>
                 </div>
             </div>
 
@@ -142,10 +152,10 @@
                 <div v-for="(exp, idx) in expenses" :key="idx" class="flex justify-between items-center p-4 bg-white rounded-2xl shadow-sm border border-slate-50">
                     <div class="flex flex-col">
                         <span class="text-sm font-bold text-slate-700">{{ exp.item }}</span>
-                        <span v-if="exp.isDebt" class="debt-badge w-fit mt-1">🔴 待還款</span>
+                        <span v-if="exp.isDebt" class="debt-badge w-fit mt-1">🔴 欠 {{ exp.debtor || '朋友' }}</span>
                     </div>
                     <div class="text-right">
-                        <p class="text-sm font-black">{{ exp.vnd }}萬 VND</p>
+                        <p class="text-sm font-black text-slate-800">{{ exp.vnd }}萬 VND</p>
                         <p class="text-[10px] text-blue-500 font-bold">NT$ {{ exp.twd }}</p>
                     </div>
                 </div>
@@ -154,7 +164,7 @@
 
         <div v-if="currentTab === 'tips'" class="space-y-4">
             <div class="bg-white rounded-[2.5rem] p-8 card-shadow">
-                <h3 class="font-black text-slate-800 mb-6 flex items-center gap-2">🔊 語音助手 <span class="text-[10px] text-blue-500 font-bold">原生越南語</span></h3>
+                <h3 class="font-black text-slate-800 mb-6 flex items-center gap-2">🔊 旅遊越語助手 <span class="text-[10px] text-blue-500 font-bold">即點即說</span></h3>
                 <div class="space-y-3">
                     <div v-for="p in phrases" :key="p.vn" class="p-5 bg-slate-50 rounded-[2rem] border border-slate-100 flex justify-between items-center active:bg-blue-50 transition">
                         <div>
@@ -194,41 +204,42 @@ createApp({
         const vnTime = ref('--:--');
         const rate = 0.077;
 
-        // 資料初始化
-        const itinerary = ref(JSON.parse(localStorage.getItem('vn_v20_it')) || [
+        // 資料初始化 (含本地快取備份)
+        const itinerary = ref(JSON.parse(localStorage.getItem('vn_v21_it')) || [
             { day: "Day 1", title: "啟程會安 🏮", details: [
-                {time:"13:30", event:"抵達高雄機場", addr:"高雄市小港區中山四路2號"},
-                {time:"15:25", event:"KHH 飛機起飛", addr:""},
-                {time:"16:50", event:"抵達峴港機場", addr:"Da Nang International Airport"},
+                {time:"13:30", event:"抵達高雄機場 (航班 KHH 15:25)", addr:"高雄市小港區中山四路2號"},
+                {time:"16:50", event:"抵達峴港機場 (航班 DAD)", addr:"Da Nang International Airport"},
                 {time:"18:00", event:"Little Hoi An Check-in", addr:"02 Thoai Ngoc Hau, Hoi An"},
-                {time:"20:00", event:"會安古鎮 & 夜市", addr:"Hội An Night Market"}
+                {time:"20:00", event:"會安古鎮 & 夜市漫步", addr:"Hội An Night Market"}
             ]},
-            { day: "Day 2", title: "竹桶船與漫遊 🚣", details: [
-                {time:"09:30", event:"迦南島竹桶船", addr:"Cam Thanh"},
-                {time:"12:30", event:"會安老街美食", addr:"Hội An Ancient Town"}
+            { day: "Day 2", title: "竹桶船與老街美食 🚣", details: [
+                {time:"09:30", event:"迦南島竹桶船體驗", addr:"Cam Thanh"},
+                {time:"12:30", event:"會安老街特色美食", addr:"Hội An Ancient Town"}
             ]},
-            { day: "Day 3", title: "野生動物園 🦁", details: [
+            { day: "Day 3", title: "野生動物園與龍橋 🦁", details: [
                 {time:"09:30", event:"珍珠野生動物園", addr:"Vinpearl River Safari Nam Hội An"},
-                {time:"16:00", event:"回峴港 Sala Check-in", addr:"036 Vo Nguyen Giap, Da Nang"}
+                {time:"16:00", event:"回峴港 Sala Check-in", addr:"036 Vo Nguyen Giap, Da Nang"},
+                {time:"20:00", event:"龍橋 (週末噴火表演)", addr:"Dragon Bridge"}
             ]},
-            { day: "Day 4", title: "巴拿山 & 洗頭 🎢", details: [
-                {time:"09:00", event:"巴拿山佛手橋", addr:"Sun World Ba Na Hills"},
-                {time:"19:00", event:"越式洗頭體驗", addr:"Da Nang Spa"}
+            { day: "Day 4", title: "巴拿山佛手橋 🎢", details: [
+                {time:"09:00", event:"巴拿山一日遊", addr:"Sun World Ba Na Hills"},
+                {time:"19:00", event:"越式洗頭舒壓", addr:"Da Nang Spa"}
             ]},
-            { day: "Day 5", title: "回程準備 ✈️", details: [
-                {time:"09:00", event:"五行山", addr:"Marble Mountains"},
-                {time:"17:50", event:"DAD 飛機起飛", addr:""}
+            { day: "Day 5", title: "五行山與伴手禮 ✈️", details: [
+                {time:"09:00", event:"五行山/大理石山", addr:"Marble Mountains"},
+                {time:"13:00", event:"韓市場最後採買", addr:"Han Market"},
+                {time:"17:50", event:"前往機場 (航班 DAD 17:50)", addr:"Da Nang International Airport"}
             ]}
         ]);
 
-        const expenses = ref(JSON.parse(localStorage.getItem('vn_v20_ex') || '[]'));
-        const packingList = ref(JSON.parse(localStorage.getItem('vn_v20_pk')) || [
-            {text:"護照", done:false}, {text:"網卡", done:false}, {text:"美金/VND", done:false}, {text:"泳衣", done:false}
+        const expenses = ref(JSON.parse(localStorage.getItem('vn_v21_ex') || '[]'));
+        const packingList = ref(JSON.parse(localStorage.getItem('vn_v21_pk')) || [
+            {text:"護照", done:false}, {text:"電子簽證(影本/電子檔)", done:false}, {text:"網卡", done:false}, {text:"美金/VND現鈔", done:false}, {text:"泳衣/泳帽", done:false}, {text:"防曬用品", done:false}
         ]);
         
         const addingItem = ref(null);
         const newItem = reactive({ time: '', event: '', addr: '' });
-        const newExp = reactive({ item: '', vnd: null, twd: null, isDebt: false });
+        const newExp = reactive({ item: '', vnd: null, twd: null, isDebt: false, debtor: '' });
         const newPackItem = ref('');
 
         const initSortable = () => {
@@ -247,12 +258,12 @@ createApp({
         const openMap = (addr) => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}`, '_blank');
         const editItem = (di, ii) => {
             const item = itinerary.value[di].details[ii];
-            const t = prompt("時間", item.time); if(t) item.time = t;
-            const e = prompt("行程", item.event); if(e) item.event = e;
-            const a = prompt("地址", item.addr); if(a !== null) item.addr = a;
+            const t = prompt("修改時間", item.time); if(t) item.time = t;
+            const e = prompt("修改行程內容", item.event); if(e) item.event = e;
+            const a = prompt("修改地址", item.addr); if(a !== null) item.addr = a;
         };
         const saveItem = (i) => { if(newItem.event){ itinerary.value[i].details.push({...newItem}); newItem.time=''; newItem.event=''; newItem.addr=''; addingItem.value=null; }};
-        const removeItem = (d, idx) => { if(confirm('刪除行程？')) itinerary.value[d].details.splice(idx, 1); };
+        const removeItem = (d, idx) => { if(confirm('確定要刪除此行程嗎？')) itinerary.value[d].details.splice(idx, 1); };
 
         const addPackItem = () => { if(newPackItem.value){ packingList.value.unshift({text:newPackItem.value, done:false}); newPackItem.value=''; }};
         const togglePackItem = (i) => packingList.value[i].done = !packingList.value[i].done;
@@ -260,7 +271,7 @@ createApp({
         const packedCount = computed(() => packingList.value.filter(t => t.done).length);
 
         const convert = (t) => { if(t==='VND') newExp.twd=Math.round(newExp.vnd/rate); else newExp.vnd=Number((newExp.twd*rate).toFixed(2)); };
-        const saveExp = () => { if(newExp.twd){ expenses.value.unshift({...newExp}); newExp.item=''; newExp.vnd=null; newExp.twd=null; newExp.isDebt=false; }};
+        const saveExp = () => { if(newExp.twd){ expenses.value.unshift({...newExp}); Object.assign(newExp, {item:'', vnd:null, twd:null, isDebt:false, debtor:''}); }};
         const totalTWD = computed(() => expenses.value.reduce((s, e) => s + (e.twd||0), 0));
         const totalDebtTWD = computed(() => expenses.value.reduce((s, e) => e.isDebt ? s + (e.twd||0) : s, 0));
 
@@ -275,9 +286,9 @@ createApp({
         const updateVNTime = () => { vnTime.value = new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date()); };
         onMounted(() => { updateVNTime(); setInterval(updateVNTime, 1000); nextTick(() => initSortable()); });
         watch([itinerary, expenses, packingList], () => {
-            localStorage.setItem('vn_v20_it', JSON.stringify(itinerary.value));
-            localStorage.setItem('vn_v20_ex', JSON.stringify(expenses.value));
-            localStorage.setItem('vn_v20_pk', JSON.stringify(packingList.value));
+            localStorage.setItem('vn_v21_it', JSON.stringify(itinerary.value));
+            localStorage.setItem('vn_v21_ex', JSON.stringify(expenses.value));
+            localStorage.setItem('vn_v21_pk', JSON.stringify(packingList.value));
         }, { deep: true });
 
         return { currentTab, expandedDay, itinerary, vnTime, addingItem, newItem, expenses, totalTWD, totalDebtTWD, newExp, packingList, newPackItem, packedCount, phrases,
