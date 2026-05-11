@@ -3,143 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>峴港旅遊終極助手 | 記帳語音全能版</title>
+    <title>峴港旅遊全功能助手 | 終極旗艦版</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f1f5f9; padding-bottom: 120px; }
-        .header-bg { background-color: #b0d1f9; }
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #f8fafc; padding-bottom: 120px; }
+        .header-bg { background-color: #b0d1f9; } /* 您指定的淺藍色 */
         .glass-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-top: 1px solid rgba(0,0,0,0.05); }
         .tab-active { color: #2563eb; font-weight: 800; border-bottom: 3px solid #2563eb; }
         [v-cloak] { display: none; }
         .card-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08); }
         .header-text-fix { color: #0f172a; }
-        .speak-btn { background: #3b82f6; color: white; border-radius: 99px; padding: 4px 12px; font-size: 10px; font-weight: bold; }
-        .expense-card { border-left: 4px solid #10b981; background: #f0fdf4; }
+        .speak-btn { background: #3b82f6; color: white; border-radius: 99px; padding: 6px 14px; font-size: 11px; font-weight: bold; }
+        .speak-btn:active { transform: scale(0.9); background: #1d4ed8; }
+        .expense-item { border-left: 4px solid #10b981; background: #f0fdf4; }
+        .time-tag { background: #eff6ff; color: #1e40af; padding: 2px 10px; border-radius: 8px; font-weight: bold; font-size: 11px; margin-right: 8px; }
     </style>
 </head>
 <body>
 
 <div id="app" v-cloak>
-    <header class="header-bg pt-12 pb-24 px-6 rounded-b-[3.5rem] shadow-2xl relative header-text-fix">
+    <header class="header-bg pt-12 pb-24 px-6 rounded-b-[3.5rem] shadow-xl relative header-text-fix">
         <div class="flex justify-between items-start">
             <div class="flex-1">
                 <div class="flex items-center gap-2 mb-2">
-                    <span class="bg-yellow-400 text-blue-900 text-[10px] font-black px-2 py-0.5 rounded">ULTIMATE VERSION</span>
+                    <span class="bg-yellow-400 text-blue-900 text-[10px] font-black px-2 py-0.5 rounded">V2026.FINAL</span>
                     <h1 class="text-2xl font-bold tracking-tight">峴港五日夏季遊</h1>
                 </div>
-                <div class="text-[11px] bg-white/40 p-3 rounded-2xl border border-blue-100 inline-block">
-                    <p>✈️ 5/31 - 6/04 | 峴港時間 {{ vnTime }}</p>
+                <div class="space-y-1 text-[11px] bg-white/40 p-3 rounded-2xl border border-blue-100 inline-block">
+                    <p>✈️ 5/31 KHH ➔ DAD | 15:25</p>
+                    <p>✈️ 6/04 DAD ➔ KHH | 17:50</p>
                 </div>
             </div>
             <div class="bg-white/50 p-4 rounded-[2.5rem] border border-blue-100 text-right backdrop-blur-xl">
-                <p class="text-xl font-bold leading-none">29°C ☀️</p>
+                <p class="text-[9px] uppercase font-black text-blue-600">峴港時間</p>
+                <p class="text-xl font-bold leading-none mt-1">{{ vnTime }}</p>
+                <div class="pt-2 mt-2 border-t border-blue-100 text-sm font-bold flex items-center justify-end gap-1">29°C ☀️</div>
             </div>
         </div>
     </header>
 
     <main class="px-5 mt-[-50px] relative z-10">
         
-        <div v-if="currentTab === 'money'" class="space-y-4">
-            <div class="bg-white rounded-[2.5rem] p-8 card-shadow">
-                <h3 class="font-black text-xl mb-6 text-center text-gray-800">💰 旅程記帳本</h3>
-                
-                <div class="grid grid-cols-2 gap-4 mb-6">
-                    <div class="bg-blue-50 p-4 rounded-2xl text-center">
-                        <p class="text-[10px] text-blue-600 font-bold uppercase">總支出 (TWD)</p>
-                        <p class="text-lg font-black text-blue-900">${{ totalTWD }}</p>
+        <div v-if="currentTab === 'guide'" class="space-y-4">
+            <div class="bg-white rounded-3xl p-6 mb-6 card-shadow">
+                <h3 class="font-black text-gray-800 mb-4 flex items-center gap-2">🏨 住宿預約</h3>
+                <div class="space-y-2">
+                    <div @click="openMap('Little Hoi An A Boutique Hotel')" class="p-3 bg-slate-50 rounded-xl border flex justify-between items-center cursor-pointer">
+                        <span class="text-sm font-bold">會安：Little Hoi An Boutique</span>
+                        <span class="text-blue-500 text-xs font-bold">地圖 ➔</span>
                     </div>
-                    <div class="bg-green-50 p-4 rounded-2xl text-center">
-                        <p class="text-[10px] text-green-600 font-bold uppercase">總支出 (萬VND)</p>
-                        <p class="text-lg font-black text-green-900">{{ totalVND }} 萬</p>
-                    </div>
-                </div>
-
-                <div class="space-y-3 bg-gray-50 p-4 rounded-3xl border border-dashed border-gray-200">
-                    <input v-model="newExpense.item" type="text" placeholder="支出項目 (例: 椰子水)" class="w-full p-3 rounded-xl border-none text-sm">
-                    <div class="flex gap-2">
-                        <select v-model="newExpense.category" class="w-1/3 p-3 rounded-xl text-sm border-none bg-white">
-                            <option value="食">🍕 食</option>
-                            <option value="衣">👕 衣</option>
-                            <option value="住">🏨 住</option>
-                            <option value="行">🚗 行</option>
-                            <option value="玩">🎢 玩</option>
-                            <option value="購">🎁 購</option>
-                        </select>
-                        <input v-model.number="newExpense.amount" type="number" placeholder="金額" class="w-2/3 p-3 rounded-xl border-none text-sm">
-                    </div>
-                    <div class="flex gap-2">
-                        <button @click="addExpense('VND')" class="flex-1 bg-green-600 text-white py-3 rounded-xl text-xs font-bold">記錄越盾(萬)</button>
-                        <button @click="addExpense('TWD')" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-xs font-bold">記錄台幣</button>
+                    <div @click="openMap('Hai An Beach Hotel & Spa')" class="p-3 bg-slate-50 rounded-xl border flex justify-between items-center cursor-pointer">
+                        <span class="text-sm font-bold">峴港：Hải An Beach Hotel</span>
+                        <span class="text-blue-500 text-xs font-bold">地圖 ➔</span>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-[2.5rem] p-6 card-shadow">
-                <div v-for="(exp, idx) in expenses" :key="idx" class="flex items-center justify-between p-4 mb-3 expense-card rounded-2xl">
-                    <div class="flex items-center gap-3">
-                        <span class="bg-white w-8 h-8 flex items-center justify-center rounded-full text-xs shadow-sm">{{ exp.category }}</span>
-                        <div>
-                            <p class="text-sm font-bold text-gray-800">{{ exp.item }}</p>
-                            <p class="text-[10px] text-gray-400">{{ exp.date }}</p>
+            <div v-for="(day, i) in itinerary" :key="i" class="bg-white rounded-[2.5rem] card-shadow overflow-hidden">
+                <div @click="toggleDay(i)" class="p-6 flex items-center justify-between cursor-pointer">
+                    <div>
+                        <span class="text-[10px] font-black text-white bg-blue-600 px-3 py-1 rounded-full uppercase">{{ day.day }}</span>
+                        <h3 class="font-bold text-gray-800 mt-2">{{ day.title }}</h3>
+                    </div>
+                    <span :class="{ 'rotate-180': expandedDay === i }" class="transition-transform">▼</span>
+                </div>
+                <div v-show="expandedDay === i" class="px-4 pb-6 bg-slate-50/50">
+                    <div v-for="(item, idx) in day.details" :key="idx" @click="item.loc ? openMap(item.loc) : null" class="flex items-start p-4 bg-white rounded-2xl mb-2 border border-gray-100 shadow-sm">
+                        <span class="time-tag">{{ item.time }}</span>
+                        <div class="flex-1">
+                            <p class="text-sm font-bold">{{ item.event }}</p>
+                            <p v-if="item.note" class="text-[10px] text-red-500 font-bold mt-1">📢 {{ item.note }}</p>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <p class="text-sm font-black text-green-700">{{ exp.vnd }} 萬 VND</p>
-                        <p class="text-[10px] font-bold text-blue-500">≈ NT$ {{ exp.twd }}</p>
+                    <div v-for="(custom, cIdx) in customItinerary[i]" :key="'c'+cIdx" class="flex items-start p-4 bg-yellow-50 rounded-2xl mb-2 border border-yellow-200">
+                        <span class="time-tag bg-yellow-200 text-yellow-800">{{ custom.time }}</span>
+                        <div class="flex-1 text-sm font-bold">{{ custom.event }}</div>
+                        <button @click.stop="removeCustom(i, cIdx)" class="text-gray-300 ml-2">✕</button>
                     </div>
-                    <button @click="removeExpense(idx)" class="ml-2 text-gray-300">✕</button>
+                    <div class="mt-4 pt-4 border-t border-dashed">
+                        <div v-if="addingEvent === i" class="space-y-2">
+                            <input v-model="newEvent.time" placeholder="12:00" class="w-full p-2 text-xs border rounded-lg">
+                            <input v-model="newEvent.event" placeholder="景點名稱" class="w-full p-2 text-xs border rounded-lg">
+                            <button @click="saveCustom(i)" class="w-full bg-blue-600 text-white py-2 rounded-lg text-xs font-bold">儲存行程</button>
+                        </div>
+                        <button v-else @click="addingEvent = i" class="w-full py-2 bg-white border-2 border-dashed border-blue-200 text-blue-500 rounded-xl text-xs font-bold">+ 新增自訂點</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div v-if="currentTab === 'guide'" class="space-y-4">
-             <div v-for="(item, i) in itinerary" :key="i" class="bg-white rounded-[2.5rem] card-shadow overflow-hidden">
-                <div @click="toggleDay(i)" class="p-6 flex items-center justify-between cursor-pointer">
-                    <div class="flex-1">
-                        <span class="text-[10px] font-black text-white bg-blue-600 px-3 py-1 rounded-full uppercase">{{ item.day }}</span>
-                        <h3 class="font-bold text-gray-800 mt-2">{{ item.title }}</h3>
+        <div v-if="currentTab === 'money'" class="space-y-4">
+            <div class="bg-white rounded-[2.5rem] p-8 card-shadow">
+                <h3 class="font-black text-xl mb-6 text-center text-gray-800">💰 旅費計算</h3>
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="bg-blue-50 p-4 rounded-3xl text-center">
+                        <p class="text-[10px] text-blue-500 font-bold">總支出 TWD</p>
+                        <p class="text-xl font-black text-blue-900">${{ totalTWD }}</p>
                     </div>
-                    <span :class="{ 'rotate-180': expandedDay === i }" class="transition-transform text-gray-300">▼</span>
+                    <div class="bg-green-50 p-4 rounded-3xl text-center">
+                        <p class="text-[10px] text-green-500 font-bold">總支出 萬VND</p>
+                        <p class="text-xl font-black text-green-900">{{ totalVND }} 萬</p>
+                    </div>
                 </div>
-                <div v-show="expandedDay === i" class="px-4 pb-6 bg-slate-50/50">
-                    <div v-for="(detail, idx) in item.details" :key="'d'+idx" @click="detail.loc ? openMap(detail.loc) : null" class="flex items-start p-4 bg-white rounded-2xl mb-2 shadow-sm border border-gray-100">
-                        <div class="flex-1 text-sm font-bold">{{ detail.time }} - {{ detail.event }}</div>
+                <div class="space-y-3 bg-gray-50 p-5 rounded-3xl">
+                    <input v-model="newExp.item" placeholder="支出內容 (如: 晚餐)" class="w-full p-3 rounded-xl border-none text-sm outline-none">
+                    <div class="flex gap-2">
+                        <select v-model="newExp.cat" class="w-1/3 p-3 rounded-xl text-sm border-none bg-white">
+                            <option>🍴食</option><option>🚗行</option><option>🏨住</option><option>🎢玩</option><option>🎁購</option>
+                        </select>
+                        <input v-model.number="newExp.amt" type="number" placeholder="金額" class="w-2/3 p-3 rounded-xl border-none text-sm outline-none">
                     </div>
+                    <div class="flex gap-2">
+                        <button @click="addExp('VND')" class="flex-1 bg-green-600 text-white py-3 rounded-xl text-xs font-bold">記 萬VND</button>
+                        <button @click="addExp('TWD')" class="flex-1 bg-blue-600 text-white py-3 rounded-xl text-xs font-bold">記 台幣</button>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <div v-for="(exp, idx) in expenses" :key="idx" class="flex items-center justify-between p-4 expense-item rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3">
+                        <span class="text-lg">{{ exp.cat }}</span>
+                        <div>
+                            <p class="text-sm font-bold text-gray-800">{{ exp.item }}</p>
+                            <p class="text-[10px] text-gray-400">{{ exp.time }}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-black text-green-700">{{ exp.vnd }} 萬 VND</p>
+                        <p class="text-[10px] font-bold text-blue-500">NT$ {{ exp.twd }}</p>
+                    </div>
+                    <button @click="removeExp(idx)" class="text-gray-300 ml-2">✕</button>
                 </div>
             </div>
         </div>
 
         <div v-if="currentTab === 'shop'" class="bg-white rounded-[2.5rem] p-8 card-shadow">
-            <h3 class="font-black text-xl mb-6 text-center">🛍️ 購物願望 (帶圖)</h3>
-            <div class="space-y-4 mb-6">
-                <input v-model="newWish" type="text" placeholder="商品名稱..." class="w-full bg-gray-50 rounded-2xl p-4 text-sm outline-none border">
+            <h3 class="font-black text-xl mb-6 text-center text-gray-800">🛍️ 購物 & 圖片截圖</h3>
+            <div class="space-y-4 mb-8">
+                <input v-model="newWish" placeholder="想買什麼..." class="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl text-sm outline-none">
                 <div class="flex gap-2">
-                    <label class="flex-1 flex items-center justify-center gap-2 bg-slate-100 py-4 rounded-2xl text-xs font-bold cursor-pointer">
-                        📸 上傳圖片 <input type="file" accept="image/*" class="hidden" @change="handleFileUpload">
+                    <label class="flex-1 flex items-center justify-center gap-2 bg-slate-100 text-slate-600 py-4 rounded-2xl text-xs font-bold cursor-pointer transition active:bg-slate-200">
+                        📸 拍攝/上傳圖片 <input type="file" accept="image/*" class="hidden" @change="handleUpload">
                     </label>
                     <button @click="addWish" class="bg-blue-600 text-white px-8 rounded-2xl font-black">新增</button>
                 </div>
+                <div v-if="previewImg" class="relative w-24 h-24 mx-auto mt-2"><img :src="previewImg" class="w-full h-full object-cover rounded-xl shadow-lg border-2 border-white"></div>
             </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div v-for="(wish, index) in wishes" :key="index" @click="toggleWish(index)" :class="{ 'opacity-40': wish.done }" class="p-2 bg-gray-50 rounded-2xl border relative">
-                    <img v-if="wish.image" :src="wish.image" class="w-full h-24 object-cover rounded-xl mb-2">
-                    <p class="text-xs font-bold text-center">{{ wish.text }}</p>
+            <div class="grid grid-cols-2 gap-4">
+                <div v-for="(wish, i) in wishes" :key="i" @click="toggleWish(i)" :class="{'opacity-40': wish.done}" class="p-3 bg-white border border-gray-100 rounded-2xl relative shadow-sm">
+                    <img v-if="wish.img" :src="wish.img" class="w-full h-32 object-cover rounded-xl mb-2">
+                    <div v-else class="w-full h-32 bg-slate-100 rounded-xl mb-2 flex items-center justify-center text-gray-300 text-xs">無圖</div>
+                    <p class="text-xs font-black text-gray-700 text-center">{{ wish.text }}</p>
+                    <button @click.stop="removeWish(i)" class="absolute -top-2 -right-2 bg-gray-200 w-6 h-6 rounded-full text-xs text-gray-500 border border-white">✕</button>
                 </div>
             </div>
         </div>
 
         <div v-if="currentTab === 'tips'" class="space-y-6">
             <div class="bg-white rounded-[2.5rem] p-8 card-shadow">
-                <h3 class="font-black text-sm text-blue-800 mb-6">💬 越南語語音小抄</h3>
+                <h3 class="font-black text-sm text-blue-800 mb-6 flex items-center gap-2">💬 常用語音 & 空耳</h3>
                 <div class="space-y-3">
-                    <div v-for="ph in phrases" :key="ph.vn" class="p-4 bg-slate-50 rounded-2xl flex justify-between items-center border-l-4 border-blue-400">
+                    <div v-for="p in phrases" :key="p.vn" class="p-4 bg-slate-50 border-l-4 border-blue-400 rounded-2xl flex justify-between items-center">
                         <div>
-                            <p class="text-[10px] font-bold opacity-60">{{ ph.tw }}</p>
-                            <p class="text-sm">{{ ph.vn }} <span class="text-blue-600 font-bold ml-1">「{{ ph.kr }}」</span></p>
+                            <p class="text-[10px] font-bold opacity-60">{{ p.tw }}</p>
+                            <p class="text-sm">{{ p.vn }} <span class="text-blue-600 font-bold ml-1">「{{ p.kr }}」</span></p>
                         </div>
-                        <button @click="speak(ph.vn)" class="speak-btn">🔊 播發音</button>
+                        <button @click="speak(p.vn)" class="speak-btn">🔊 播放發音</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2.5rem] p-8 card-shadow">
+                <h3 class="font-black text-sm text-red-600 mb-6 flex items-center gap-2">⚠️ 越南旅遊重點</h3>
+                <div class="space-y-4">
+                    <div class="p-3 bg-red-50 border-l-4 border-red-500 rounded-xl">
+                        <p class="text-xs font-bold text-red-800">小費：按摩約 5-10 萬 VND，床頭 2 萬，切記不給硬幣。</p>
+                    </div>
+                    <div class="p-3 bg-orange-50 border-l-4 border-orange-500 rounded-xl">
+                        <p class="text-xs font-bold text-orange-800">飲水：只喝瓶裝水，腸胃弱者避開攤販冰塊。</p>
+                    </div>
+                    <div class="p-3 bg-green-50 border-l-4 border-green-500 rounded-xl">
+                        <p class="text-xs font-bold text-green-800">交通：只用 Grab，下車前對好找錢與金額。</p>
                     </div>
                 </div>
             </div>
@@ -148,92 +194,88 @@
     </main>
 
     <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[94%] glass-nav rounded-[2.5rem] px-2 py-4 flex justify-around shadow-2xl z-50">
-        <button @click="currentTab = 'guide'" :class="{ 'tab-active': currentTab === 'guide' }" class="flex flex-col items-center px-2"><span class="text-xl">🗺️</span><span class="text-[10px] mt-1 font-bold">行程</span></button>
-        <button @click="currentTab = 'money'" :class="{ 'tab-active': currentTab === 'money' }" class="flex flex-col items-center px-2"><span class="text-xl">💰</span><span class="text-[10px] mt-1 font-bold">記帳</span></button>
-        <button @click="currentTab = 'shop'" :class="{ 'tab-active': currentTab === 'shop' }" class="flex flex-col items-center px-2"><span class="text-xl">🛍️</span><span class="text-[10px] mt-1 font-bold">購物</span></button>
-        <button @click="currentTab = 'tips'" :class="{ 'tab-active': currentTab === 'tips' }" class="flex flex-col items-center px-2"><span class="text-xl">💡</span><span class="text-[10px] mt-1 font-bold">語法</span></button>
+        <button @click="currentTab='guide'" :class="{'tab-active': currentTab==='guide'}" class="flex flex-col items-center px-2"><span class="text-xl">🗺️</span><span class="text-[10px] mt-1 font-bold">行程</span></button>
+        <button @click="currentTab='money'" :class="{'tab-active': currentTab==='money'}" class="flex flex-col items-center px-2"><span class="text-xl">💰</span><span class="text-[10px] mt-1 font-bold">記帳</span></button>
+        <button @click="currentTab='shop'" :class="{'tab-active': currentTab==='shop'}" class="flex flex-col items-center px-2"><span class="text-xl">🛍️</span><span class="text-[10px] mt-1 font-bold">購物</span></button>
+        <button @click="currentTab='tips'" :class="{'tab-active': currentTab==='tips'}" class="flex flex-col items-center px-2"><span class="text-xl">💡</span><span class="text-[10px] mt-1 font-bold">語法</span></button>
     </nav>
 </div>
 
 <script>
-    const { createApp, ref, reactive, watch, onMounted, computed } = Vue;
-    createApp({
-        setup() {
-            const currentTab = ref('guide');
-            const expandedDay = ref(0);
-            const vnTime = ref('--:--');
-            const rate = 0.077; // 台幣/越盾(萬) 匯率基準
+const { createApp, ref, reactive, watch, onMounted, computed } = Vue;
+createApp({
+    setup() {
+        const currentTab = ref('guide');
+        const expandedDay = ref(0);
+        const vnTime = ref('--:--');
+        const rate = 0.077; // 匯率基準台幣對萬越盾
 
-            const phrases = [
-                { tw: '你好', vn: 'Xin chào', kr: '新朝' },
-                { tw: '謝謝', vn: 'Cảm ơn', kr: '感恩' },
-                { tw: '便宜一點', vn: 'Bớt đi', kr: '撥滴' },
-                { tw: '不要辣', vn: 'Không cay', kr: '空該' }
-            ];
+        const getStore = (k, d = '[]') => JSON.parse(localStorage.getItem(k) || d);
+        const customItinerary = ref(getStore('vn_custom_it', '[[],[],[],[],[]]'));
+        const wishes = ref(getStore('vn_wishes_v11'));
+        const expenses = ref(getStore('vn_expenses_v11'));
 
-            const getStorage = (k, def = '[]') => JSON.parse(localStorage.getItem(k) || def);
-            const packingList = ref(getStorage('vn_pk_v10'));
-            const wishes = ref(getStorage('vn_ws_v10'));
-            const customItinerary = ref(getStorage('vn_ct_v10', '[[],[],[],[],[]]'));
-            const expenses = ref(getStorage('vn_exp_v10'));
+        const previewImg = ref(null); const newWish = ref('');
+        const newExp = reactive({ item: '', cat: '🍴食', amt: null });
+        const addingEvent = ref(null);
+        const newEvent = reactive({ time: '', event: '' });
 
-            const newExpense = reactive({ item: '', category: '食', amount: null });
-            const newWish = ref(''); const previewImage = ref(null);
+        const phrases = [
+            { tw: '你好', vn: 'Xin chào', kr: '新朝' },
+            { tw: '謝謝', vn: 'Cảm ơn', kr: '感恩' },
+            { tw: '多少錢？', vn: 'Bao nhiêu?', kr: '包紐' },
+            { tw: '便宜一點', vn: 'Bớt đi', kr: '撥滴' },
+            { tw: '不要辣', vn: 'Không cay', kr: '空該' },
+            { tw: '救命', vn: 'Cứu tôi với', kr: '勾多一味' }
+        ];
 
-            const itinerary = [
-                { day: "Day 1", title: "啟程 ➔ 會安", details: [{ time: "16:50", event: "抵達峴港" }, { time: "20:00", event: "會安夜市" }] },
-                { day: "Day 2", title: "竹桶船 ➔ 深度遊", details: [{ time: "09:30", event: "竹桶船" }, { time: "16:00", event: "日本橋" }] },
-                { day: "Day 3", title: "動物園 ➔ 龍橋", details: [{ time: "09:30", event: "野生動物園" }, { time: "20:00", event: "龍橋夜景" }] },
-                { day: "Day 4", title: "巴拿山 ➔ 韓江", details: [{ time: "10:00", event: "佛手橋" }, { time: "19:30", event: "韓江漫步" }] },
-                { day: "Day 5", title: "五行山 ➔ 返台", details: [{ time: "09:30", event: "五行山" }, { time: "17:50", event: "機場報到" }] }
-            ];
+        const itinerary = [
+            { day: "Day 1", title: "啟程 ➔ 會安古鎮", details: [{time:"16:50", event:"抵達峴港"}, {time:"20:00", event:"會安夜市探險", loc:"Hội An Night Market"}] },
+            { day: "Day 2", title: "竹桶船 ➔ 會安漫遊", details: [{time:"09:30", event:"迦南島竹桶船", loc:"Cam Thanh"}, {time:"16:00", event:"日本橋巡禮", loc:"Chùa Cầu"}] },
+            { day: "Day 3", title: "動物園 ➔ 龍橋夜景", details: [{time:"09:30", event:"野生動物園", loc:"River Safari"}, {time:"20:00", event:"賞龍橋", loc:"Dragon Bridge"}] },
+            { day: "Day 4", title: "巴拿山 ➔ 韓江夜色", details: [{time:"10:00", event:"佛手黃金橋", loc:"Golden Bridge"}, {time:"19:30", event:"韓江畔漫步"}] },
+            { day: "Day 5", title: "五行山 ➔ 返台", details: [{time:"09:30", event:"五行山探險", loc:"Marble Mountains"}, {time:"17:50", event:"機場報到"}] }
+        ];
 
-            const addExpense = (type) => {
-                if(!newExpense.item || !newExpense.amount) return;
-                let twd, vnd;
-                if(type === 'VND') {
-                    vnd = newExpense.amount;
-                    twd = Math.round(vnd / rate);
-                } else {
-                    twd = newExpense.amount;
-                    vnd = Number((twd * rate).toFixed(2));
-                }
-                expenses.value.unshift({
-                    item: newExpense.item,
-                    category: newExpense.category,
-                    twd, vnd,
-                    date: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
-                });
-                newExpense.item = ''; newExpense.amount = null;
-            };
+        // 記帳邏輯
+        const addExp = (type) => {
+            if(!newExp.item || !newExp.amt) return;
+            let twd, vnd;
+            if(type === 'VND') { vnd = newExp.amt; twd = Math.round(vnd / rate); }
+            else { twd = newExp.amt; vnd = Number((twd * rate).toFixed(2)); }
+            expenses.value.unshift({ item: newExp.item, cat: newExp.cat, twd, vnd, time: new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) });
+            newExp.item = ''; newExp.amt = null;
+        };
+        const totalTWD = computed(() => expenses.value.reduce((s, e) => s + e.twd, 0));
+        const totalVND = computed(() => expenses.value.reduce((s, e) => s + e.vnd, 0).toFixed(2));
+        const removeExp = (i) => expenses.value.splice(i,1);
 
-            const totalTWD = computed(() => expenses.value.reduce((s, e) => s + e.twd, 0));
-            const totalVND = computed(() => expenses.value.reduce((s, e) => s + e.vnd, 0).toFixed(2));
+        // 行程邏輯
+        const saveCustom = (i) => { if(newEvent.time&&newEvent.event){ customItinerary.value[i].push({...newEvent}); newEvent.time=''; newEvent.event=''; addingEvent.value=null; }};
+        const removeCustom = (d,c) => customItinerary.value[d].splice(c,1);
 
-            const removeExpense = (i) => expenses.value.splice(i,1);
-            const speak = (t) => { const s=new SpeechSynthesisUtterance(t); s.lang='vi-VN'; window.speechSynthesis.speak(s); };
-            const handleFileUpload = (e) => { const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=(ev)=>previewImage.value=ev.target.result; r.readAsDataURL(f); };
-            const addWish = () => { if(newWish.value||previewImage.value){ wishes.value.push({text:newWish.value||'清單項',image:previewImage.value,done:false}); newWish.value=''; previewImage.value=null; }};
-            
-            const updateVNTime = () => {
-                const o = { timeZone:'Asia/Ho_Chi_Minh', hour:'2-digit', minute:'2-digit', hour12:false };
-                vnTime.value = new Intl.DateTimeFormat('zh-TW',o).format(new Date());
-            };
-            onMounted(() => { updateVNTime(); setInterval(updateVNTime,1000); });
+        // 購物邏輯
+        const handleUpload = (e) => { const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=(ev)=>previewImg.value=ev.target.result; r.readAsDataURL(f); };
+        const addWish = () => { if(newWish.value||previewImg.value){ wishes.value.push({text:newWish.value||'新商品',img:previewImg.value,done:false}); newWish.value=''; previewImg.value=null; }};
+        const removeWish = (i) => wishes.value.splice(i,1);
+        const toggleWish = (i) => wishes.value[i].done = !wishes.value[i].done;
 
-            watch([packingList, wishes, customItinerary, expenses], () => {
-                localStorage.setItem('vn_pk_v10', JSON.stringify(packingList.value));
-                localStorage.setItem('vn_ws_v10', JSON.stringify(wishes.value));
-                localStorage.setItem('vn_ct_v10', JSON.stringify(customItinerary.value));
-                localStorage.setItem('vn_exp_v10', JSON.stringify(expenses.value));
-            }, { deep: true });
+        const speak = (t) => { const s=new SpeechSynthesisUtterance(t); s.lang='vi-VN'; s.rate=0.8; window.speechSynthesis.speak(s); };
+        const openMap = (q) => window.open(`https://www.google.com/maps/search/${encodeURIComponent(q)}`, '_blank');
+        const updateVNTime = () => { vnTime.value = new Intl.DateTimeFormat('zh-TW',{timeZone:'Asia/Ho_Chi_Minh',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date()); };
 
-            return { currentTab, expandedDay, itinerary, wishes, newWish, addWish, vnTime, phrases, speak,
-                     expenses, newExpense, addExpense, totalTWD, totalVND, removeExpense, previewImage, handleFileUpload,
-                     toggleDay: (i) => expandedDay.value = expandedDay.value === i ? null : i,
-                     toggleWish: (i) => wishes.value[i].done = !wishes.value[i].done };
-        }
-    }).mount('#app');
+        onMounted(() => { updateVNTime(); setInterval(updateVNTime, 1000); });
+        watch([customItinerary, wishes, expenses], () => {
+            localStorage.setItem('vn_custom_it', JSON.stringify(customItinerary.value));
+            localStorage.setItem('vn_wishes_v11', JSON.stringify(wishes.value));
+            localStorage.setItem('vn_expenses_v11', JSON.stringify(expenses.value));
+        }, { deep: true });
+
+        return { currentTab, expandedDay, itinerary, customItinerary, wishes, previewImg, newWish, newExp, expenses, totalTWD, totalVND, phrases, vnTime, addingEvent, newEvent,
+                 addExp, removeExp, saveCustom, removeCustom, addWish, removeWish, toggleWish, handleUpload, speak, openMap,
+                 toggleDay: (i) => expandedDay.value = (expandedDay.value === i ? null : i) };
+    }
+}).mount('#app');
 </script>
 </body>
 </html>
